@@ -2,7 +2,12 @@ export const prerender = false;
 
 import type { APIRoute } from "astro";
 import { getCollection } from "astro:content";
-import { z } from "zod";
+import type { CollectionEntry } from "astro:content";
+import { z } from "astro/zod";
+
+type CarEntry = CollectionEntry<"cars">;
+type CarData = CarEntry["data"];
+type CarFilter = (data: CarData) => boolean;
 
 const searchParamsSchema = z.object({
 	make: z.string().optional(),
@@ -23,7 +28,16 @@ const searchParamsSchema = z.object({
 	transmission: z.string().optional(),
 	color: z.string().optional(),
 	condition: z.string().optional(),
-	sort: z.string().optional(),
+	sort: z
+		.enum([
+			"mileage-desc",
+			"mileage-asc",
+			"price-desc",
+			"price-asc",
+			"year-desc",
+			"year-asc",
+		])
+		.optional(),
 	search: z.string().optional(),
 });
 
@@ -66,13 +80,13 @@ export const GET: APIRoute = async ({ request }) => {
 		search,
 	} = result.data;
 
-	const filters: ((data: any) => boolean)[] = [];
+	const filters: CarFilter[] = [];
 
 	const afterParsing = performance.now();
 
 	// Make
 	if (make && make !== "all") {
-		filters.push((data: any) => data.general.make === make);
+		filters.push((data) => data.general.make === make);
 	}
 
 	const afterMake = performance.now();
@@ -80,7 +94,7 @@ export const GET: APIRoute = async ({ request }) => {
 	// Model
 	if (model && model !== "all") {
 		if (make !== "all") {
-			filters.push((data: any) => data.general.model === model);
+			filters.push((data) => data.general.model === model);
 		} else {
 			return new Response(JSON.stringify({ error: "Please provide a make" }), {
 				status: 400,
@@ -93,29 +107,29 @@ export const GET: APIRoute = async ({ request }) => {
 
 	// Year
 	if (yearFrom) {
-		filters.push((data: any) => data.history.year >= parseInt(yearFrom));
+		filters.push((data) => data.history.year >= Number.parseInt(yearFrom));
 	}
 
 	if (yearTo) {
-		filters.push((data: any) => data.history.year <= parseInt(yearTo));
+		filters.push((data) => data.history.year <= Number.parseInt(yearTo));
 	}
 
 	// Price
 	if (price && price !== "all") {
 		const [minPrice, maxPrice] = price.split("-").map(Number);
 
-		filters.push((data: any) => {
+		filters.push((data) => {
 			const regularPrice = data.general.price;
 			const salePrice = data.general.salePrice;
 
 			if (maxPrice) {
 				return (
 					(regularPrice >= minPrice && regularPrice <= maxPrice) ||
-					(salePrice && salePrice >= minPrice && salePrice <= maxPrice)
+					(salePrice !== undefined && salePrice >= minPrice && salePrice <= maxPrice)
 				);
-			} else {
-				return regularPrice >= minPrice || (salePrice && salePrice >= minPrice);
 			}
+
+			return regularPrice >= minPrice || (salePrice !== undefined && salePrice >= minPrice);
 		});
 	}
 
@@ -123,36 +137,36 @@ export const GET: APIRoute = async ({ request }) => {
 
 	// Mileage
 	if (mileageFrom) {
-		filters.push((data: any) => data.history.mileage >= parseInt(mileageFrom));
+		filters.push((data) => data.history.mileage >= Number.parseInt(mileageFrom));
 	}
 
 	if (mileageTo) {
-		filters.push((data: any) => data.history.mileage <= parseInt(mileageTo));
+		filters.push((data) => data.history.mileage <= Number.parseInt(mileageTo));
 	}
 
 	// Fuel Type
 	if (fuelType && fuelType !== "all") {
-		filters.push((data: any) => data.efficiency.fuelType === fuelType);
+		filters.push((data) => data.efficiency.fuelType === fuelType);
 	}
 
 	// Body Type
 	if (bodyType && bodyType !== "all") {
-		filters.push((data: any) => data.general.bodyType === bodyType);
+		filters.push((data) => data.general.bodyType === bodyType);
 	}
 
 	// Transmission
 	if (transmission && transmission !== "all") {
-		filters.push((data: any) => data.technical.transmission === transmission);
+		filters.push((data) => data.technical.transmission === transmission);
 	}
 
 	// Color
 	if (color && color !== "all") {
-		filters.push((data: any) => data.exterior.color === color);
+		filters.push((data) => data.exterior.color === color);
 	}
 
 	// Condition
 	if (condition && condition !== "all") {
-		filters.push((data: any) => data.general.condition === condition);
+		filters.push((data) => data.general.condition === condition);
 	}
 
 	const afterFilters = performance.now();
@@ -164,7 +178,7 @@ export const GET: APIRoute = async ({ request }) => {
 			.replace(/[^a-zA-Z0-9\s]/g, "")
 			.split(" ");
 
-		filters.push((data: any) => {
+		filters.push((data) => {
 			const searchableFields = [
 				data.general.make,
 				data.general.model,
@@ -176,43 +190,43 @@ export const GET: APIRoute = async ({ request }) => {
 			];
 
 			return searchQueries.every((query) =>
-				searchableFields.some((field) => field && field.toLowerCase().includes(query))
+				searchableFields.some((field) => field?.toLowerCase().includes(query) ?? false)
 			);
 		});
 	}
 
 	const afterSearch = performance.now();
 
-	const allCars = await getCollection("cars", ({ data }: { data: any }) => {
+	const allCars = await getCollection("cars", ({ data }) => {
 		return filters.every((filter) => filter(data));
 	});
 
 	const afterGetCollection = performance.now();
 
 	// Sort
-	if (sort && sort !== "all") {
-		const [sortKey, sortOrder] = sort.split("-");
-		const order = sortOrder === "asc" ? 1 : -1;
+	if (sort) {
+		const order = sort.endsWith("-asc") ? 1 : -1;
 
-		allCars.sort((a: any, b: any) => {
-			let aValue, bValue;
+		allCars.sort((a, b) => {
+			let aValue: number;
+			let bValue: number;
 
-			switch (sortKey) {
-				case "price":
+			switch (sort) {
+				case "price-asc":
+				case "price-desc":
 					aValue = a.data.general.salePrice ? a.data.general.salePrice : a.data.general.price;
 					bValue = b.data.general.salePrice ? b.data.general.salePrice : b.data.general.price;
 					break;
-				case "mileage":
+				case "mileage-asc":
+				case "mileage-desc":
 					aValue = a.data.history.mileage;
 					bValue = b.data.history.mileage;
 					break;
-				case "year":
+				case "year-asc":
+				case "year-desc":
 					aValue = a.data.history.year;
 					bValue = b.data.history.year;
 					break;
-				default:
-					aValue = a.data[sortKey];
-					bValue = b.data[sortKey];
 			}
 
 			if (aValue < bValue) return -1 * order;
