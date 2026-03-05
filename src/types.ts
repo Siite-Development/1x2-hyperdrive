@@ -1,6 +1,6 @@
 import type { CollectionEntry } from "astro:content";
-import { colorClasses } from "./components/CardGridAlt.astro";
-import { pillColors } from "./components/Pill.astro";
+import type { colorClasses } from "./components/CardGridAlt.astro";
+import type { pillColors } from "./components/Pill.astro";
 
 export type Blog = CollectionEntry<"blog">;
 export type Car = CollectionEntry<"cars">;
