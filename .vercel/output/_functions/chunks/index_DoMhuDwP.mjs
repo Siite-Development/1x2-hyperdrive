@@ -1,10 +1,10 @@
-import { c as createComponent } from './consts_CVriCkRT.mjs';
+import { c as createComponent } from './consts_93M-zUI7.mjs';
 import colors from 'piccolore';
-import { e as createRenderInstruction, f as addAttribute, r as renderTemplate, m as maybeRenderHead, h as renderComponent, j as renderHead, k as renderSlot, F as Fragment, s as slash } from './entrypoint_DGqqXg0L.mjs';
-import { e as externalLinks, p as phone, s as siteName, a as socialMedia, b as email, c as address, d as cvr, f as siteSlogan, h as siteLang, t as themeColor, j as getMileage, k as getMileageUnit, g as getPrice, l as getMakeModelSet, m as defaultPaginationSize, n as priceSteps } from './helpers_PsDIxQ2f.mjs';
+import { e as createRenderInstruction, f as addAttribute, r as renderTemplate, m as maybeRenderHead, h as renderComponent, j as renderHead, k as renderSlot, F as Fragment, s as slash } from './entrypoint_DOZcwvmX.mjs';
+import { e as externalLinks, p as phone, s as siteName, a as socialMedia, b as email, c as address, d as cvr, f as siteSlogan, h as siteLang, t as themeColor, j as getMileage, k as getMileageUnit, g as getPrice, l as getMakeModelSet, m as defaultPaginationSize, n as priceSteps } from './helpers_Bme5zZsx.mjs';
 import 'clsx';
-import { $ as $$Image } from './_astro_assets_Dd2-1zSj.mjs';
-import { c as createSvgComponent, C as CONTENT_LAYER_TYPE, L as LIVE_CONTENT_TYPE, d as defineCollection } from './_astro_content_CE6LOMh5.mjs';
+import { $ as $$Image } from './_astro_assets_khJfW3Wc.mjs';
+import { c as createSvgComponent, C as CONTENT_LAYER_TYPE, L as LIVE_CONTENT_TYPE, d as defineCollection } from './_astro_content_HO2sQOZv.mjs';
 import * as z from 'zod/v4';
 import 'js-yaml';
 import 'smol-toml';

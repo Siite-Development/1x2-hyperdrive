@@ -1,7 +1,6 @@
 // @ts-check
 import { defineConfig } from "astro/config";
 import mdx from "@astrojs/mdx";
-import playformInline from "@playform/inline";
 import vercel from "@astrojs/vercel";
 import tailwindcss from "@tailwindcss/vite";
 
@@ -9,12 +8,12 @@ import tailwindcss from "@tailwindcss/vite";
 export default defineConfig({
 	site: "https://1x2biler.dk",
 	base: "/",
-	integrations: [mdx(), playformInline({ Critters: true })],
+	integrations: [mdx()],
 	output: "static",
+	adapter: vercel(),
 	devToolbar: {
 		enabled: false,
 	},
-	adapter: vercel(),
 	vite: {
 		plugins: [tailwindcss()],
 	},
