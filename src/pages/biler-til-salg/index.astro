@@ -115,7 +115,7 @@ if (search) {
 			data.general.condition,
 		];
 		return searchQueries.every((query) =>
-			searchableFields.some((field) => field?.toLowerCase().includes(query) ?? false)
+			searchableFields.some((field) => field?.toLowerCase()?.includes(query) ?? false)
 		);
 	});
 }
