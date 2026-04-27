@@ -1,4 +1,4 @@
-import { g as getCollection } from './_astro_content_C-KKMiwG.mjs';
+import { g as getCollection } from './_astro_content_CE6LOMh5.mjs';
 
 const siteLang = "da-DK";
 const siteCurrency = "DKK";

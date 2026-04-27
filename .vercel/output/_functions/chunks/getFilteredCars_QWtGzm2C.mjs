@@ -1,4 +1,4 @@
-import { g as getCollection } from './_astro_content_C-KKMiwG.mjs';
+import { g as getCollection } from './_astro_content_CE6LOMh5.mjs';
 import * as z from 'zod/v4';
 
 const prerender = false;

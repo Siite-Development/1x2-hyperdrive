@@ -1,4 +1,4 @@
-import { g as getCollection } from './_astro_content_C-KKMiwG.mjs';
+import { g as getCollection } from './_astro_content_CE6LOMh5.mjs';
 
 const prerender = false;
 const GET = async ({ request }) => {

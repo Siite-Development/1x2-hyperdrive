@@ -1,8 +1,8 @@
 import 'html-escaper';
 import { Traverse } from 'neotraverse/modern';
 import * as z from 'zod/v4';
-import { y as spreadAttributes, B as unescapeHTML, r as renderTemplate, C as removeBase, i as isRemotePath, A as AstroError, D as LiveContentConfigError, G as AstroUserError, H as UnknownContentCollectionError } from './entrypoint_Pxk1SJiL.mjs';
-import { c as createComponent, b as VALID_INPUT_FORMATS } from './consts_BGDXqgP_.mjs';
+import { y as spreadAttributes, B as unescapeHTML, r as renderTemplate, C as removeBase, i as isRemotePath, A as AstroError, D as LiveContentConfigError, G as AstroUserError, H as UnknownContentCollectionError } from './entrypoint_DGqqXg0L.mjs';
+import { c as createComponent, b as VALID_INPUT_FORMATS } from './consts_CVriCkRT.mjs';
 import 'clsx';
 import 'piccolore';
 import * as devalue from 'devalue';
