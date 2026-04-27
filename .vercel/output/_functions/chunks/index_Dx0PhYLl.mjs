@@ -1,10 +1,11 @@
-import { c as createComponent } from './consts_93M-zUI7.mjs';
+import { c as createComponent } from './consts_C-d_ItDf.mjs';
 import colors from 'piccolore';
-import { e as createRenderInstruction, f as addAttribute, r as renderTemplate, m as maybeRenderHead, h as renderComponent, j as renderHead, k as renderSlot, F as Fragment, s as slash } from './entrypoint_DOZcwvmX.mjs';
-import { e as externalLinks, p as phone, s as siteName, a as socialMedia, b as email, c as address, d as cvr, f as siteSlogan, h as siteLang, t as themeColor, j as getMileage, k as getMileageUnit, g as getPrice, l as getMakeModelSet, m as defaultPaginationSize, n as priceSteps } from './helpers_Bme5zZsx.mjs';
+import { e as createRenderInstruction, f as addAttribute, r as renderTemplate, m as maybeRenderHead, h as renderComponent, j as renderHead, k as renderSlot, F as Fragment, s as slash } from './entrypoint_C3XUSmOZ.mjs';
+import { e as externalLinks, p as phone, s as siteName, a as socialMedia, b as email, c as address, d as cvr, f as siteSlogan, h as siteLang, t as themeColor, j as getMileage, k as getMileageUnit, g as getPrice, l as getMakeModelSet, m as defaultPaginationSize, n as priceSteps } from './helpers_DWAA59ep.mjs';
+import { g as getFilteredCars } from './carFilters_fZhB1gka.mjs';
 import 'clsx';
-import { $ as $$Image } from './_astro_assets_khJfW3Wc.mjs';
-import { c as createSvgComponent, C as CONTENT_LAYER_TYPE, L as LIVE_CONTENT_TYPE, d as defineCollection } from './_astro_content_HO2sQOZv.mjs';
+import { $ as $$Image } from './_astro_assets_rlMLsYFC.mjs';
+import { c as createSvgComponent, C as CONTENT_LAYER_TYPE, L as LIVE_CONTENT_TYPE, d as defineCollection } from './_astro_content_BlsUEsru.mjs';
 import * as z from 'zod/v4';
 import 'js-yaml';
 import 'smol-toml';
@@ -810,18 +811,24 @@ const prerender = false;
 const $$Index = createComponent(async ($$result, $$props, $$slots) => {
   const Astro2 = $$result.createAstro($$props, $$slots);
   Astro2.self = $$Index;
-  const APIURL = new URL("/api/getFilteredCars.json", Astro2.url);
   const searchParamsValue = Astro2.url.searchParams;
   const searchParamsArray = Array.from(searchParamsValue);
-  APIURL.search = searchParamsValue.toString();
-  const response = await fetch(APIURL);
-  let allCars = [];
-  if (response.ok) {
-    const responseData = await response.json();
-    allCars = responseData.allCars || [];
-  } else if (response.status !== 404) {
-    console.error("getFilteredCars error:", response.status, await response.text());
-  }
+  const allCars = await getFilteredCars({
+    make: searchParamsValue.get("make") ?? void 0,
+    model: searchParamsValue.get("model") ?? void 0,
+    yearFrom: searchParamsValue.get("yearFrom") ?? void 0,
+    yearTo: searchParamsValue.get("yearTo") ?? void 0,
+    price: searchParamsValue.get("price") ?? void 0,
+    mileageFrom: searchParamsValue.get("mileageFrom") ?? void 0,
+    mileageTo: searchParamsValue.get("mileageTo") ?? void 0,
+    fuelType: searchParamsValue.get("fuelType") ?? void 0,
+    bodyType: searchParamsValue.get("bodyType") ?? void 0,
+    transmission: searchParamsValue.get("transmission") ?? void 0,
+    color: searchParamsValue.get("color") ?? void 0,
+    condition: searchParamsValue.get("condition") ?? void 0,
+    sort: searchParamsValue.get("sort") ?? void 0,
+    search: searchParamsValue.get("search") ?? void 0
+  });
   const makes = [...new Set(allCars.map((car) => car.data.general.make))].sort();
   const colors = [...new Set(allCars.map((car) => car.data.exterior.color))].sort();
   const count = allCars.length;

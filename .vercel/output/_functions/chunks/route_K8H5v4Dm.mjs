@@ -1,4 +1,4 @@
-import { g as getActionContext } from './entrypoint_DOZcwvmX.mjs';
+import { g as getActionContext } from './entrypoint_C3XUSmOZ.mjs';
 
 const POST = async (context) => {
   const { action, serializeActionResult } = getActionContext(context);

@@ -3,6 +3,7 @@ export const prerender = false;
 
 import { type CollectionEntry } from "astro:content";
 import { siteName, priceSteps, defaultPaginationSize } from "~/data/config";
+import { getFilteredCars } from "~/utils/carFilters";
 import Layout from "~/layouts/Layout.astro";
 import Section from "~/components/Section.astro";
 import Container from "~/components/Container.astro";
@@ -17,25 +18,28 @@ import FilterBarMobile from "~/components/FilterBarMobile.astro";
 
 type Car = CollectionEntry<"cars">;
 
-const APIURL = new URL("/api/getFilteredCars.json", Astro.url);
-
 const searchParamsValue = Astro.url.searchParams;
 const searchParamsArray = Array.from(searchParamsValue);
 
-APIURL.search = searchParamsValue.toString();
+const allCars = await getFilteredCars({
+	make: searchParamsValue.get("make") ?? undefined,
+	model: searchParamsValue.get("model") ?? undefined,
+	yearFrom: searchParamsValue.get("yearFrom") ?? undefined,
+	yearTo: searchParamsValue.get("yearTo") ?? undefined,
+	price: searchParamsValue.get("price") ?? undefined,
+	mileageFrom: searchParamsValue.get("mileageFrom") ?? undefined,
+	mileageTo: searchParamsValue.get("mileageTo") ?? undefined,
+	fuelType: searchParamsValue.get("fuelType") ?? undefined,
+	bodyType: searchParamsValue.get("bodyType") ?? undefined,
+	transmission: searchParamsValue.get("transmission") ?? undefined,
+	color: searchParamsValue.get("color") ?? undefined,
+	condition: searchParamsValue.get("condition") ?? undefined,
+	sort: searchParamsValue.get("sort") ?? undefined,
+	search: searchParamsValue.get("search") ?? undefined,
+});
 
-const response = await fetch(APIURL);
-let allCars: Car[] = [];
-if (response.ok) {
-	const responseData = await response.json();
-	allCars = responseData.allCars || [];
-} else if (response.status !== 404) {
-	// Log non-404 errors; treat as empty to avoid a 500
-	console.error("getFilteredCars error:", response.status, await response.text());
-}
-
-const makes = [...new Set(allCars.map((car: Car) => car.data.general.make))].sort();
-const colors = [...new Set(allCars.map((car: Car) => car.data.exterior.color))].sort();
+const makes = [...new Set(allCars.map((car) => car.data.general.make))].sort();
+const colors = [...new Set(allCars.map((car) => car.data.exterior.color))].sort();
 const count = allCars.length;
 
 const sideBarData = {
