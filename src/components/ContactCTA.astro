@@ -1,0 +1,34 @@
+---
+import { phone, email } from "~/data/config";
+import Button from "~/components/Button.astro";
+
+interface Props {
+	heading?: string;
+	buttonLabel?: string;
+	buttonHref?: string;
+	class?: string;
+}
+const {
+	heading,
+	buttonLabel = "Få et gratis tilbud",
+	buttonHref = "/kontakt-os",
+	class: className = "",
+} = Astro.props as Props;
+---
+
+<div class:list={["not-prose", className]}>
+	{heading && <p class="text-lg font-semibold mb-4">{heading}</p>}
+	<ul class="list-none p-0 space-y-2 mb-6">
+		<li>
+			<a href={phone.href} class="text-lg font-semibold hover:underline">
+				{phone.label}
+			</a>
+		</li>
+		<li>
+			<a href={email.href} class="text-lg font-semibold hover:underline">
+				{email.label}
+			</a>
+		</li>
+	</ul>
+	<Button href={buttonHref}>{buttonLabel}</Button>
+</div>

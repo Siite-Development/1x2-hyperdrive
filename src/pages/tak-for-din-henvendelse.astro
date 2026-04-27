@@ -1,0 +1,26 @@
+---
+import Layout from "~/layouts/Layout.astro";
+import Section from "~/components/Section.astro";
+import Container from "~/components/Container.astro";
+import Heading from "~/components/Heading.astro";
+import Button from "~/components/Button.astro";
+---
+
+<Layout title="Tak for din henvendelse" noindex>
+	<Section>
+		<Container>
+			<div class="max-w-2xl mx-auto text-center py-12">
+				<Heading>
+					<h1 slot="heading-title">Tak for din henvendelse</h1>
+					<p slot="heading-content">
+						Vi vender tilbage hurtigst muligt – typisk inden næste hverdag.
+					</p>
+				</Heading>
+				<div class="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
+					<Button href="/biler-til-salg">Se vores biler</Button>
+					<Button href="/" color="outline">Tilbage til forsiden</Button>
+				</div>
+			</div>
+		</Container>
+	</Section>
+</Layout>

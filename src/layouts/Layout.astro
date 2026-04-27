@@ -3,10 +3,11 @@ import "~/styles/global.css";
 import { ClientRouter } from "astro:transitions";
 import Header from "~/components/Header.astro";
 import Footer from "~/components/Footer.astro";
-import { siteName, siteLang, themeColor } from "~/data/config";
+import { siteName, siteLang, themeColor, siteSlogan } from "~/data/config";
 
 const baseUrl = `${Astro.url.protocol}//${Astro.url.host}`;
-const { pageTitle, title, description, noindex = false } = Astro.props;
+const defaultDescription =
+	"Find din næste bil hos 1x2 Biler. Vi tilbyder brugte biler og Oscar biludlejning – tryg service, fleksibel finansiering og personlig rådgivning.";
 
 interface Props {
 	pageTitle?: string;
@@ -14,6 +15,17 @@ interface Props {
 	description?: string;
 	noindex?: boolean;
 }
+
+const {
+	pageTitle,
+	title,
+	description = defaultDescription,
+	noindex = false,
+} = Astro.props as Props;
+
+const resolvedPageTitle = pageTitle ?? (title ? `${title} | ${siteName}` : `${siteName} – ${siteSlogan}`);
+const ogTitle = title ? `${title} | ${siteName}` : `${siteName} – ${siteSlogan}`;
+const ogLocale = siteLang.replace("-", "_"); // Open Graph wants da_DK
 ---
 
 <!doctype html>
@@ -24,30 +36,28 @@ interface Props {
 		<meta name="theme-color" content={themeColor} />
 		<meta name="description" content={description} />
 		{noindex && <meta name="robots" content="noindex,nofollow" />}
-		<link rel="author" href="humans.txt" />
+		<link rel="author" href="/humans.txt" />
 
 		<link rel="icon" type="image/png" href="/favicon-96x96.png" sizes="96x96" />
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="shortcut icon" href="/favicon.ico" />
 		<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
 		<meta name="apple-mobile-web-app-title" content={siteName} />
-		<!-- <link rel="manifest" href="/site.webmanifest" /> -->
 
 		<meta property="og:url" content={Astro.url} />
 		<meta property="og:type" content="website" />
-		<meta property="og:title" content={`${title} | ${siteName}`} />
-		<meta property="og:image" content={`${baseUrl}/images/og-image.jpg`} />
+		<meta property="og:title" content={ogTitle} />
+		<meta property="og:image" content={`${baseUrl}/og-image.jpg`} />
 		<meta property="og:description" content={description} />
 		<meta property="og:site_name" content={siteName} />
-		<meta property="og:locale" content={siteLang} />
+		<meta property="og:locale" content={ogLocale} />
 
-		<meta name="twitter:card" content="summary" />
+		<meta name="twitter:card" content="summary_large_image" />
 		<meta name="twitter:url" content={Astro.url} />
-		<meta name="twitter:title" content={`${title} | ${siteName}`} />
+		<meta name="twitter:title" content={ogTitle} />
 		<meta name="twitter:description" content={description} />
-		<!-- <meta name="twitter:image" content={`${baseUrl}/images/og-image.jpg`} /> -->
+		<meta name="twitter:image" content={`${baseUrl}/og-image.jpg`} />
 
-		<title>{pageTitle}</title>
+		<title>{resolvedPageTitle}</title>
 		<ClientRouter />
 	</head>
 	<body>

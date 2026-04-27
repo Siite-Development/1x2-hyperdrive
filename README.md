@@ -1,78 +1,86 @@
-# HyperDrive
+# 1x2 Bilhus
 
-HyperDrive is a free theme for the Astro framework, designed to provide a beautiful and functional starting point for your next car dealer website. Whether you're selling Cars, Bikes or Boats, or any other similar product, HyperDrive has you covered with its clean design and easy-to-use components.
+Astro-baseret hjemmeside for [1x2 Biler](https://1x2biler.dk/) – brugte biler i Herlufmagle siden 1984. Bygget på det gratis [HyperDrive](https://github.com/wpinfusion/astro-hyperdrive) Astro-tema og rebrandet til 1x2 Bilhus.
 
-## 🌟 About HyperDrive
+## 🛠️ Teknologistak
 
-HyperDrive is perfect for car dealers looking to create a modern, responsive website. It features a range of premade pages and components that can be easily customized to fit your brand. The theme is built with Astro, ensuring fast load times and excellent performance.
+- **Astro** – statisk side-generator med understøttelse af serveraktioner.
+- **TailwindCSS v4** – brugerflade-styling med brand-tokens (`#FFFF05` gul / `#097BAA` blå).
+- **Inter** + **Montserrat** – brødtekst og overskrifter.
+- **Embla Carousel** – billed-galleri på bil-detaljesider.
+- **GLightbox** – fuldskærms billedvisning.
+- **Netlify** + **Netlify Forms** – hosting og indsendelse af kontakt-/forespørgselsformularer.
 
-## 🛠️ Technologies Used
+## 🚀 Kom i gang
 
--   **Astro**: The core framework for building fast, content-focused websites.
--   **TailwindCSS**: A utility-first CSS framework for rapid UI development.
--   **Embla Carousel**: A modern slider library for creating responsive sliders.
+```sh
+npm install
+npm run dev      # http://localhost:4321
+npm run build    # produktionsbuild i ./dist
+```
 
-## 🚀 Installation and Deployment
-
-To get started with HyperDrive, follow these steps:
-
-1. **Clone HyperDrive**:
-
-    ```sh
-    git clone https://github.com/wpinfusion/astro-hyperdrive.git
-    ```
-
-2. **Install Dependencies**:
-
-    ```sh
-    npm install
-    ```
-
-3. **Run Development Server**:
-
-    ```sh
-    npm run dev
-    ```
-
-4. **Build for Production**:
-
-    ```sh
-    npm run build
-    ```
-
-## 📂 Project Structure
-
-Inside of your HyperDrive project, you'll see the following folders and files:
+## 📂 Struktur
 
 ```text
 /
-├── public/
-│   └── favicon.svg
+├── public/                    # statiske filer (favicons, fonts, OG-billede)
+├── scripts/
+│   └── fetch-assets.sh        # henter brand- og bilbilleder fra 1x2biler.dk
 ├── src/
-│   ├── assets/
-│   ├── components/
-│   ├── layouts/
-│   │   └── Layout.astro
-│   ├── pages/
-│   │   ├── index.astro
-│   └── styles/
-└── package.json
+│   ├── actions/               # Astro server-actions (lånberegner)
+│   ├── assets/images/
+│   │   ├── brand/             # logo
+│   │   ├── home/              # hero/welcome/oscar billeder
+│   │   ├── partners/          # Accept Auto, CarGarantie logoer
+│   │   ├── cars/<slug>/       # bil-galleri pr. slug
+│   │   └── icons/             # SVG ikoner
+│   ├── components/            # Astro UI-komponenter
+│   ├── content/cars/          # bil-MDX-filer (én pr. bil)
+│   ├── content.config.ts      # Zod-skema for cars-collection
+│   ├── data/
+│   │   ├── config.ts          # site-navn, kontakt, sociale medier
+│   │   └── menus.ts           # navigation
+│   ├── layouts/Layout.astro   # global layout (head, header, footer)
+│   ├── pages/                 # ruter (.astro)
+│   ├── styles/global.css      # Tailwind + brand-tokens + komponentklasser
+│   └── utils/                 # helpers + Danish labels
+└── astro.config.mjs
 ```
 
-## 📄 Premade Pages
+## 📄 Sider
 
--   Home
--   Cars
--   Blog
--   Contact
--   About Us
--   Services
--   404
+| Rute | Beskrivelse |
+|---|---|
+| `/` | Forside med hero, Oscar-intro, velkomst, "Derfor vælger kunder os", featured biler, kontaktformular, biludlejning-CTA |
+| `/biler-til-salg` | Listeside med filtre og pagination (SSR) |
+| `/biler-til-salg/<slug>` | Bil-detaljeside med galleri, specifikationer, udstyrsliste, lånberegner, forespørgsel |
+| `/finansiering` | Generel info om finansieringsløsninger |
+| `/accept-auto` | Accept Auto partner-side |
+| `/cargarantie` | CarGarantie partner-side |
+| `/om-os` | Om virksomheden + 6-tile-grid |
+| `/kontakt-os` | Telefon/e-mail + kontaktformular |
+| `/privatlivspolitik` | GDPR-tekst |
+| `/tak-for-din-henvendelse` | Tak-side efter formular-indsendelse (`noindex`) |
+| `/404` | Fejl-side |
 
-## 🛠️ Quick start
+## ➕ Tilføj en ny bil
 
-To start adding your cars, go to /content/cars and add your car data in a markdown (.mdx) file. Each car should have a unique slug, title, and other relevant details like price, description, and images. Refer to the `example.mdx` file or any of the existing car examples for the required structure.
+1. Læg billeder i `src/assets/images/cars/<slug>/01.jpeg`, `02.jpeg`, ... (første billede er listebillede + hovedbillede).
+2. Opret `src/content/cars/<slug>.mdx` med frontmatter. Brug `src/content/cars/example.mdx` eller en eksisterende fil (`audi-q5.mdx`) som skabelon.
+3. Krævede felter: `title`, `general.{make, model, price, bodyType, doors, seatingCapacity}`, `history.{mileage, year}`, `technical.{horsePower, transmission, engineSizeCC}`, `efficiency.fuelType`, `exterior.color`.
+4. Sæt `misc.featured: true` for at vise bilen i "Vores biler"-sektionen på forsiden, eller specifikt slug i `index.astro`.
+5. Sæt `misc.loanWidget: true` for at vise lånberegneren på detaljesiden.
 
-## 👀 Stuck?
+## 🖼️ Hent kildebilleder
 
-If you have any questions or need help with HyperDrive, feel free to reach out to me at info@wpinfusion.com, or open an issue on the [HyperDrive GitHub repository](https://github.com/wpinfusion/astro-hyperdrive)
+Brand- og bilbilleder kan re-hentes fra `1x2biler.dk` med:
+
+```sh
+bash scripts/fetch-assets.sh
+```
+
+Scriptet er idempotent – allerede downloadede filer springes over.
+
+## 📝 Formularer
+
+Kontaktformularer er konfigureret til Netlify Forms (`data-netlify="true"` + skjult `form-name` + honeypot). Indsendelser optræder i Netlify-dashboardet og redirecter brugeren til `/tak-for-din-henvendelse`.

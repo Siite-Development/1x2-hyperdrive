@@ -2,24 +2,27 @@
 import IconPaperAirplane from "~/assets/images/icons/paper-airplane.svg";
 ---
 
-<h2 class="h4">Ask a question</h2>
+<h2 class="h4">Stil et spørgsmål</h2>
 <p>
-	Interested in this car? Fill out the form below with any questions you may have and we'll get back to you as soon as
-	possible.
+	Interesseret i denne bil? Udfyld formularen herunder med dine spørgsmål, så vender vi tilbage hurtigst muligt.
 </p>
-<form>
+<form name="inquire" data-netlify="true" netlify-honeypot="company-website">
+	<input type="hidden" name="form-name" value="inquire" />
+	<p class="hidden" aria-hidden="true">
+		<label>Udfyld ikke dette felt: <input name="company-website" tabindex="-1" autocomplete="off" /></label>
+	</p>
 	<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
 		<div>
-			<label for="name">Name</label>
-			<input type="text" id="name" name="name" />
+			<label for="inquire-name">Navn</label>
+			<input type="text" id="inquire-name" name="name" required />
 		</div>
 		<div>
-			<label for="email">Email</label>
-			<input type="email" id="email" name="email" />
+			<label for="inquire-email">E-mail</label>
+			<input type="email" id="inquire-email" name="email" required />
 		</div>
 		<div class="lg:col-span-2">
-			<label for="message">Message</label>
-			<textarea id="message" name="message" rows="4"></textarea>
+			<label for="inquire-message">Besked</label>
+			<textarea id="inquire-message" name="message" rows="4"></textarea>
 		</div>
 	</div>
 	<div class="mt-8">

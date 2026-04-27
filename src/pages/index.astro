@@ -5,267 +5,198 @@ import Section from "~/components/Section.astro";
 import Container from "~/components/Container.astro";
 import Button from "~/components/Button.astro";
 import Hero from "~/components/Hero.astro";
-import Faq from "~/components/Faq.astro";
 import Heading from "~/components/Heading.astro";
-import WidgetSearch from "~/components/WidgetSearch.astro";
-import Grid from "~/components/Grid.astro";
-import GridItem from "~/components/GridItem.astro";
-import ShowPosts from "~/components/ShowPosts.astro";
-import Team from "~/components/Team.astro";
-import Stats from "~/components/Stats.astro";
-
-// Images
-import ImageCarDealer from "~/assets/images/pexels-shkrabaanthony-7144179.jpg";
-import ImageHeadingBackground from "~/assets/images/pexels-jeshoots-com-147458-451590.jpg";
 import ShowCars from "~/components/ShowCars.astro";
-import ImageOne from "~/assets/images/pexels-leif-bergerson-99376750-9764731.webp";
-import ImageTwo from "~/assets/images/pexels-zenzazione-2922140.webp";
+import Contact from "~/components/forms/Contact.astro";
+import WhyChooseUs from "~/components/WhyChooseUs.astro";
+import { externalLinks, phone, email, siteName, siteSlogan } from "~/data/config";
+
+import ImageHero from "~/assets/images/home/hero.jpg";
+import ImageWelcome from "~/assets/images/home/welcome.jpg";
+import ImageOscar from "~/assets/images/home/oscar-rental.webp";
+
+const description =
+	"Find din næste bil hos 1x2 Biler. Vi tilbyder brugte biler og Oscar biludlejning – tryg service, fleksibel finansiering og personlig rådgivning.";
 ---
 
-<Layout pageTitle="Home">
-	{/* Main Heading */}
+<Layout title="Forside" description={description}>
+	{/* 1. Hero */}
 	<Section class:list={"relative"}>
 		<Image
-			src={ImageHeadingBackground}
-			alt="Heading background"
+			src={ImageHero}
+			alt=""
 			class:list={"absolute inset-0 w-full h-full object-cover"}
+			loading="eager"
 		/>
-		<div class="absolute inset-0 w-full h-full object-cover bg-gray-800/80"></div>
+		<div class="absolute inset-0 w-full h-full bg-gray-900/70"></div>
 		<Container class:list={"relative z-10"}>
 			<Heading class:list={"prose-invert max-w-4xl"}>
-				<h1 slot="heading-title" class="mb-0 lg:text-7xl text-balance">
-					Find your next car in our exclusive collection
+				<h1 slot="heading-title" class="mb-0 text-balance">
+					{siteSlogan}
 				</h1>
 				<p slot="heading-content">
-					Search for your next car here. We have a wide range of cars for sale. Browse through our collection
-					and find the perfect car that suits your needs and budget.
+					Vi hjælper dig trygt gennem hele købsprocessen – og finder bilen, der
+					passer til dig.
 				</p>
+				<Button href="/kontakt-os" class:list={"mt-4"}>Kontakt os i dag</Button>
 			</Heading>
-			<WidgetSearch />
 		</Container>
 	</Section>
 
-	{/* Hero */}
+	{/* 2. Oscar Biludlejning */}
 	<Section>
 		<Container>
 			<Hero>
 				<div slot="hero-left" class="prose lg:max-w-2xl">
-					<h2>Welcome to our car dealer!</h2>
-					<p>
-						Find your next car here. We have a wide range of cars for sale. Browse through our collection
-						and find the perfect car that suits your needs and budget.
+					<p class="text-sm font-semibold tracking-wider uppercase text-[var(--color-brand-blue)] not-prose">
+						<a
+							href={externalLinks.oscarRental}
+							target="_blank"
+							rel="noopener noreferrer"
+							class="hover:underline"
+						>
+							Oscar biludlejning
+						</a>
 					</p>
-
-					<Button href="/cars" class:list={"mt-4"}>View all cars</Button>
+					<h2>Biludlejning gjort simpelt</h2>
+					<p>
+						Udover salg af brugte biler tilbyder vi også biludlejning gennem Oscar
+						Biludlejning. Her kan du leje alt fra små biler til større familiebiler
+						til en fair pris – nemt, hurtigt og uden skjulte gebyrer.
+					</p>
+					<p>
+						Lej en bil direkte fra os i Herlufmagle. Vi finder den rigtige bil til dit
+						behov, uanset om det er ferie, flytning eller weekendtur.
+					</p>
+					<Button href={externalLinks.oscarRental} newtab class:list={"mt-4"}>
+						Læs mere her
+					</Button>
 				</div>
 				<div slot="hero-right">
-					<Image src={ImageCarDealer} alt="Car dealer" />
+					<Image src={ImageOscar} alt="Oscar Biludlejning – udlejningsbiler" />
 				</div>
 			</Hero>
 		</Container>
 	</Section>
 
-	{/* Grid */}
-	<Section>
-		<Container>
-			<Grid>
-				<GridItem image={ImageOne} imageAlt="Car dealer" span={2} link="/cars" As="a" xl>
-					<h2>Featured cars</h2>
-					<p>
-						Discover the ultimate driving experience with our exclusive collection of featured cars. Whether
-						you're looking for a sleek sports car, a reliable family vehicle, or an eco-friendly hybrid, we
-						have something for everyone. Our extensive inventory is carefully curated to ensure that you
-						find the perfect match for your lifestyle and budget.
-					</p>
-					<Button As="button" type="button" color="white-outline" class:list={"mt-4 group-hover:bg-white/10"}
-						>View all cars</Button
-					>
-				</GridItem>
-
-				<GridItem image={ImageTwo} imageAlt="Car dealer" link="/cars" As="a">
-					<h3>Featured cars</h3>
-					<p>
-						Discover the ultimate driving experience with our exclusive collection of featured cars. Whether
-						you're looking for a sleek sports car, a reliable family vehicle, or an eco-friendly hybrid, we
-						have something for everyone.
-					</p>
-					<Button As="button" type="button" color="white-outline" class:list={"mt-4 group-hover:bg-white/10"}
-						>View all cars</Button
-					>
-				</GridItem>
-
-				<GridItem>
-					<h3>Featured cars</h3>
-					<p>
-						Discover the ultimate driving experience with our exclusive collection of featured cars. Whether
-						you're looking for a sleek sports car, a reliable family vehicle, or an eco-friendly hybrid, we
-						have something for everyone.
-					</p>
-				</GridItem>
-			</Grid>
-		</Container>
-	</Section>
-
-	{/* Hero */}
+	{/* 3. Velkommen til 1x2 Biler */}
 	<Section class:list={"bg-gray-50"}>
 		<Container>
 			<Hero invert>
 				<div slot="hero-left" class="prose lg:max-w-2xl">
-					<h2>Welcome to our car dealer!</h2>
+					<h2>Velkommen til 1x2 Biler</h2>
 					<p>
-						Find your next car here. We have a wide range of cars for sale. Browse through our collection
-						and find the perfect car that suits your needs and budget.
+						Hos 1x2 Biler har vi siden 1984 hjulpet kunder med at finde den helt
+						rigtige bil. Vi specialiserer os i salg af brugte biler – og hvis vi
+						ikke har den bil, du leder efter, så skaffer vi den hjem til dig.
 					</p>
+					<p>
+						Vi giver professionel rådgivning gennem hele købsprocessen, så du kan
+						træffe et velinformeret valg og få den bedst mulige biloplevelse.
+					</p>
+					<p>
+						Book et møde med vores erfarne og venlige personale for en
+						uforpligtende bilsnak eller prøvekørsel. Kaffen er altid frisk – og det
+						er vi også.
+					</p>
+					<ul class="not-prose list-none p-0 my-6 space-y-2">
+						<li>
+							<a href={phone.href} class="text-lg font-semibold hover:underline">
+								{phone.label}
+							</a>
+						</li>
+						<li>
+							<a href={email.href} class="text-lg font-semibold hover:underline">
+								{email.label}
+							</a>
+						</li>
+					</ul>
+					<Button href="/kontakt-os" class:list={"mt-4"}>Få et gratis tilbud</Button>
 				</div>
 				<div slot="hero-right">
-					<Image src={ImageCarDealer} alt="Car dealer" />
+					<Image src={ImageWelcome} alt="1x2 Biler showroom" />
 				</div>
 			</Hero>
 		</Container>
 	</Section>
 
-	{/* Cars */}
-	<Section class:list={"bg-blue-50"}>
-		<Container>
-			<Heading>
-				<h2 slot="heading-title" class="mb-0">Featured cars</h2>
-				<p slot="heading-content">
-					Search for your next car here. We have a wide range of cars for sale. Browse through our collection
-					and find the perfect car that suits your needs and budget.
-				</p>
-			</Heading>
-
-			<ShowCars slugs={["audi-tt-coupe", "porsche-911", "volkswagen-polo-gti"]} />
-		</Container>
-	</Section>
-
-	{/* Stats */}
+	{/* 4. DERFOR VÆLGER KUNDER OS */}
 	<Section>
 		<Container>
-			<Heading class:list={"text-center mx-auto"}>
-				<h2 slot="heading-title" class="text-balance">Why choose us?</h2>
-				<p slot="heading-content">
-					We are the leading car dealer in the country. With over 20 years of experience, we have helped
-					thousands of customers find their dream car.
-				</p>
-			</Heading>
-
-			<Stats
-				items={[
-					{
-						title: "Cars in stock",
-						value: "259",
-						animateNumber: true,
-						animateFrom: 100,
-					},
-					{
-						title: "Satified customers",
-						value: "1088",
-						animateNumber: true,
-						animateFrom: 800,
-					},
-					{
-						title: "Experience",
-						value: "20+ years",
-					},
-				]}
-			/>
+			<WhyChooseUs />
 		</Container>
 	</Section>
 
-	{/* CTA */}
-	<Section class:list={"bg-gradient-to-br from-gray-900 to-gray-700"}>
-		<Container>
-			<Heading class:list={"mb-0 lg:mb-0 prose-invert text-center mx-auto"}>
-				<h2 slot="heading-title">Can't find the ideal car?</h2>
-
-				<p slot="heading-content">
-					Our team is here to help you find the perfect car that suits your needs and budget. Whether you're
-					looking for a sleek sports car, a reliable family vehicle, or an eco-friendly hybrid, we have
-					something for everyone.
-				</p>
-
-				<Button href="/contact" color="white" class:list={"mt-8"}>Contact us</Button>
-			</Heading>
-		</Container>
-	</Section>
-
-	{/* Cars */}
+	{/* 5. Featured cars (template addition; flagged for client review) */}
 	<Section class:list={"bg-gray-50"}>
 		<Container>
 			<Heading>
-				<h2 slot="heading-title" class="mb-0">Recent cars</h2>
+				<h2 slot="heading-title" class="mb-0">Vores biler</h2>
 				<p slot="heading-content">
-					Search for your next car here. We have a wide range of cars for sale. Browse through our collection
-					and find the perfect car that suits your needs and budget.
+					Vi har altid et udvalg af brugte biler på lager – og kan skaffe den helt
+					rigtige, hvis du ikke finder den her.
 				</p>
 			</Heading>
 
-			<ShowCars ui="grid" slugs={["audi-tt-coupe", "porsche-911", "volkswagen-polo-gti"]} />
+			<ShowCars ui="grid" slugs={["audi-q5", "peugeot-308", "vw-up"]} />
+
+			<div class="mt-12 flex justify-center">
+				<Button href="/biler-til-salg">Se alle biler</Button>
+			</div>
 		</Container>
 	</Section>
 
-	{/* News */}
+	{/* 6. Contact form — "Vi hjælper dig godt på vej" */}
 	<Section>
 		<Container>
-			<Heading class:list={"max-w-3xl"}>
-				<h2 slot="heading-title">Latest news</h2>
-
-				<p slot="heading-content">
-					Stay up to date with the latest news and updates from our car dealer. Read our blog posts to learn
-					more about our featured cars, special offers, and industry news.
-				</p>
-			</Heading>
-
-			<ShowPosts />
+			<div class="grid grid-cols-1 lg:grid-cols-5 gap-12 items-start">
+				<div class="lg:col-span-2 prose">
+					<h2>Vi hjælper dig godt på vej</h2>
+					<p>
+						Har du spørgsmål, eller vil du høre mere om en bestemt bil? Send os en
+						besked, så vender vi tilbage hurtigst muligt – typisk inden næste
+						hverdag.
+					</p>
+					<ul class="not-prose list-none p-0 space-y-2 mt-6">
+						<li>
+							<a href={phone.href} class="text-lg font-semibold hover:underline">
+								{phone.label}
+							</a>
+						</li>
+						<li>
+							<a href={email.href} class="text-lg font-semibold hover:underline">
+								{email.label}
+							</a>
+						</li>
+					</ul>
+				</div>
+				<div class="lg:col-span-3">
+					<Contact />
+				</div>
+			</div>
 		</Container>
 	</Section>
 
-	{/* FAQ */}
-	<Section class:list={"bg-gray-50"}>
+	{/* 7. Biludlejning gjort simpelt — yellow CTA strip */}
+	<Section class:list={"bg-[var(--color-brand-yellow)]"}>
 		<Container>
-			<Heading class:list={"max-w-3xl mx-auto lg:text-center"}>
-				<h2 slot="heading-title">Welcome to our car dealer!</h2>
-
-				<p slot="heading-content">
-					Find your next car here. We have a wide range of cars for sale. Browse through our collection and
-					find the perfect car that suits your needs and budget.
+			<div class="max-w-3xl mx-auto text-center">
+				<h2 class="mb-4">Biludlejning gjort simpelt</h2>
+				<p class="text-lg leading-loose">
+					Udover salg af brugte biler tilbyder vi også biludlejning gennem Oscar
+					Biludlejning. Her kan du leje alt fra små biler til større familiebiler
+					til en fair pris – nemt, hurtigt og uden skjulte gebyrer.
 				</p>
-			</Heading>
-
-			<Faq
-				items={[
-					{
-						question: "What's the best thing about Switzerland?",
-						answer: "I don't know, but the flag is a big plus. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas cupiditate laboriosam fugiat.",
-					},
-					{
-						question: "What do you call a fake noodle?",
-						answer: "An impasta. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas cupiditate laboriosam fugiat.",
-					},
-					{
-						question: "What do you call a belt made out of watches?",
-						answer: "A waist of time. Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas cupiditate laboriosam fugiat.",
-					},
-				]}
-			/>
-		</Container>
-	</Section>
-
-	{/* Team */}
-	<Section>
-		<Container>
-			<Heading class:list={"max-w-3xl mx-auto lg:text-center"}>
-				<h2 slot="heading-title">Our team</h2>
-
-				<p slot="heading-content">
-					Meet the team behind our car dealer. Our dedicated staff is here to help you find the perfect car
-					that suits your needs and budget. Whether you're looking for a sleek sports car, a reliable family
-					vehicle, or an eco-friendly hybrid, we have something for everyone.
-				</p>
-			</Heading>
-
-			<Team />
+				<div class="mt-8">
+					<Button
+						href={externalLinks.oscarRental}
+						newtab
+						color="black"
+					>
+						Læs mere her
+					</Button>
+				</div>
+			</div>
 		</Container>
 	</Section>
 </Layout>

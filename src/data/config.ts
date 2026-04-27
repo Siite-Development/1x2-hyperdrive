@@ -1,62 +1,60 @@
 // Global variables
-export const siteLang = "en-US";
-export const siteCurrency = "USD";
-export const siteDomain = "hyperdrive.com";
-export const siteName = "HyperDrive";
-export const siteSlogan = "The best car dealership in the galaxy!";
-export const themeColor = "#fef08a";
-export const unitSystem = "imperial";
-export const interestRate = 5.12;
+export const siteLang = "da-DK";
+export const siteCurrency = "DKK";
+export const siteDomain = "1x2biler.dk";
+export const siteName = "1x2 Bilhus";
+export const siteSlogan = "Biler for enhver smag siden 1984";
+export const themeColor = "#FFFF05";
+export const unitSystem = "metric";
+export const interestRate = 6.5;
 export const defaultPaginationSize = 12;
 export const priceSteps = [50000, 100000, 150000, 200000, 250000, 300000];
 
 export const phone = {
-	href: "tel:+123456789",
-	label: "(123) 456-789",
+	href: "tel:+4557674717",
+	label: "+45 57 67 47 17",
 };
 
 export const email = {
-	href: "mailto:info@hyperdrive.com",
-	label: "info@hyperdrive.com",
+	href: "mailto:info@1x2biler.dk",
+	label: "info@1x2biler.dk",
 };
 
 export const address = {
-	street: "1234 Space Street",
-	city: "Galaxy City",
-	zip: "12345",
-	state: "Milky Way",
-	country: "Space",
+	street: "Industrivej 16",
+	city: "Herlufmagle",
+	zip: "4160",
+	state: "",
+	country: "Danmark",
 };
+
+export const cvr = "35649980";
 
 export const socialMedia = {
 	facebook: {
-		url: "https://facebook.com",
+		url: "https://www.facebook.com/1x2Biler",
 		label: "Facebook",
 		icon: "facebook",
 	},
-	x: {
-		url: "https://x.com",
-		label: "X",
-		icon: "x",
-	},
 	instagram: {
-		url: "https://instagram.com",
+		url: "https://www.instagram.com/1x2biler/",
 		label: "Instagram",
 		icon: "instagram",
 	},
-	youtube: {
-		url: "https://youtube.com",
-		label: "YouTube",
-		icon: "youtube",
-	},
 };
 
+// Source site shows no posted opening hours; clients book by appointment.
 export const hours = {
-	monday: "9:00 - 17:00",
-	tuesday: "9:00 - 17:00",
-	wednesday: "9:00 - 17:00",
-	thursday: "9:00 - 17:00",
-	friday: "9:00 - 17:00",
-	saturday: "9:00 - 17:00",
-	sunday: "Closed",
+	monday: "Efter aftale",
+	tuesday: "Efter aftale",
+	wednesday: "Efter aftale",
+	thursday: "Efter aftale",
+	friday: "Efter aftale",
+	saturday: "Efter aftale",
+	sunday: "Lukket",
+};
+
+export const externalLinks = {
+	oscarRental: "https://hejoscar.dk/afdelinger/biludlejning-herlufmagle",
+	oscarRentalShort: "https://hejoscar.dk/afdelinger/herlufmagle",
 };

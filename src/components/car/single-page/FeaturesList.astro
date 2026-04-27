@@ -45,10 +45,12 @@ const excludeFields = ["price", "salePrice", "availability", "hidden", "vin", "l
 												{subKey === "mileage"
 													? `${getMileage(value as number)} ${getMileageUnit()}`
 													: value === true
-														? "Yes"
-														: value
-															? value
-															: "N/A"}
+														? "Ja"
+														: value === false
+															? "Nej"
+															: value !== undefined && value !== null && value !== ""
+																? value
+																: "—"}
 											</dd>
 										</>
 									)

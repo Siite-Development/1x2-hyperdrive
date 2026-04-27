@@ -1,27 +1,27 @@
 ---
 import IconShare from "~/assets/images/icons/share.svg";
 import IconFacebook from "~/assets/images/icons/social-media/facebook.svg";
-import IconX from "~/assets/images/icons/social-media/x.svg";
 import IconWhatsApp from "~/assets/images/icons/social-media/whatsapp.svg";
 import IconEmail from "~/assets/images/icons/social-media/email.svg";
 import IconLink from "~/assets/images/icons/social-media/link.svg";
 
 const currentPageUrl = Astro.url.href;
-const emailSubject = `Check this out car!`;
-const emailBody = `I found an awesome ride for you!
+const emailSubject = `Tjek denne bil!`;
+const emailBody = `Hej,
 
-Check out the details here:
+Jeg fandt en interessant bil til dig.
+
+Se detaljerne her:
 
 ${currentPageUrl}
 
-Regards`;
+Mvh.`;
 
 const emailSubjectEncoded = encodeURIComponent(emailSubject);
 const emailBodyEncoded = encodeURIComponent(emailBody);
 
 const SocialUrls = {
 	Facebook: `https://www.facebook.com/sharer.php?u=${currentPageUrl}`,
-	"X/Twitter": `https://twitter.com/intent/tweet?text=Check%20out%20this%20awesome%20ride!%20${currentPageUrl}`,
 	WhatsApp: `whatsapp://send/?text=${currentPageUrl}`,
 	Email: `mailto:?subject=${emailSubjectEncoded}&body=${emailBodyEncoded}`,
 };
@@ -37,13 +37,13 @@ const SocialUrls = {
 			aria-haspopup="true"
 		>
 			<IconShare class="size-3 inline-block mr-1 -mt-0.5" />
-			<span>Share</span>
+			<span>Del</span>
 		</button>
 	</div>
 
 	<div
 		id="menu-social-share"
-		class="absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none ease-in duration-75 transform opacity-0 scale-95"
+		class="absolute right-0 z-10 mt-2 w-44 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none ease-in duration-75 transform opacity-0 scale-95"
 		role="menu"
 		aria-orientation="vertical"
 		aria-labelledby="button-social-share"
@@ -51,13 +51,12 @@ const SocialUrls = {
 	>
 		<div class="py-0" role="none">
 			{
-				Object.entries(SocialUrls).map(([key, value], index) => (
+				Object.entries(SocialUrls).map(([key, value]) => (
 					<a href={value} class="block px-4 py-2 text-sm hover:bg-gray-100" role="menuitem" tabindex="-1">
 						{key === "Facebook" && <IconFacebook class="size-5 inline-block mr-1 -mt-0.5" />}
-						{key === "X/Twitter" && <IconX class="size-5 inline-block mr-1 -mt-0.5" />}
 						{key === "WhatsApp" && <IconWhatsApp class="size-5 inline-block mr-1 -mt-0.5" />}
 						{key === "Email" && <IconEmail class="size-5 inline-block mr-1 -mt-0.5" />}
-						{key}
+						{key === "Email" ? "E-mail" : key}
 					</a>
 				))
 			}
@@ -69,7 +68,7 @@ const SocialUrls = {
 				tabindex="-1"
 			>
 				<IconLink class="size-5 inline-block mr-1 -mt-0.5" />
-				Copy link
+				Kopiér link
 			</button>
 		</div>
 	</div>
@@ -86,7 +85,6 @@ const SocialUrls = {
 		const menuSocialShare = document.getElementById("menu-social-share")!;
 		const buttonCopyLink = document.getElementById("button-copy-link")!;
 
-		// Create a function to open and close the menu
 		function openMenu() {
 			menuSocialShare.classList.remove("ease-in", "duration-75", "transform", "opacity-0", "scale-95");
 			menuSocialShare.classList.add("ease-out", "duration-100", "transform", "opacity-100", "scale-100");
@@ -110,7 +108,6 @@ const SocialUrls = {
 			closeMenu();
 		});
 
-		// Close the menu when clicking outside
 		document.addEventListener("click", (event) => {
 			if (!menuSocialShare.contains(event.target as Node) && !buttonSocialShare.contains(event.target as Node)) {
 				closeMenu();

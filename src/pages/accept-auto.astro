@@ -1,0 +1,95 @@
+---
+import { Image } from "astro:assets";
+import Layout from "~/layouts/Layout.astro";
+import Section from "~/components/Section.astro";
+import Container from "~/components/Container.astro";
+import Heading from "~/components/Heading.astro";
+import Button from "~/components/Button.astro";
+import Contact from "~/components/forms/Contact.astro";
+import ContactCTA from "~/components/ContactCTA.astro";
+import LogoAcceptAuto from "~/assets/images/partners/acceptauto-logo.png";
+---
+
+<Layout
+	title="Accept Auto"
+	description="Få dit billån nemt og hurtigt hos Accept Auto – med eller uden udbetaling. Vi tilbyder attraktive vilkår, hurtigt svar og tryg finansiering til din nye bil."
+>
+	<Section>
+		<Container>
+			<Heading class:list={"max-w-3xl"}>
+				<h1 slot="heading-title">Accept Auto</h1>
+				<p slot="heading-content">
+					<em
+						>Få dit billån nemt og hurtigt hos Accept Auto – med eller uden udbetaling.
+						Vi tilbyder attraktive vilkår, hurtigt svar og tryg finansiering til din
+						nye bil.</em
+					>
+				</p>
+				<Button href="/kontakt-os" class:list={"mt-6"}>Kontakt os i dag</Button>
+			</Heading>
+		</Container>
+	</Section>
+
+	<Section class:list={"bg-gray-50"}>
+		<Container>
+			<div class="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
+				<div class="lg:col-span-2 prose">
+					<h2>Vi klarer finansieringen</h2>
+					<p>Få dit billån hos Accept Auto – det er nemt og billigt!</p>
+					<p>
+						Få finansieret dit bilkøb hos os. Her får du et attraktivt og fordelagtigt
+						billån, og det er hurtigere og nemmere end du tror.
+					</p>
+					<p>
+						Duften af din nye drømmebil sidder i næsen, og du vil bare gerne ud at
+						køre. Vi sørger for, at du kan springe møderne i banken over, og få din
+						finansiering på plads hos os, mens du venter.
+					</p>
+
+					<h3>Dine fordele:</h3>
+					<ul>
+						<li>Billån fra 0,- i udbetaling</li>
+						<li>Markedets bedste muligheder</li>
+						<li>Hurtigt svar på dit billån</li>
+						<li>Du bevarer dine lånemuligheder i banken</li>
+						<li>Kan indfries når det passer dig</li>
+						<li>Tryg og sikker finansiering.</li>
+						<li>Guldlån – billån med eller uden udbetaling</li>
+					</ul>
+					<p>
+						Uanset om du har en udbetaling eller ej, kan vi hjælpe dig. Få et guldlån
+						på attraktive vilkår – det er både nemt og hurtigt.
+					</p>
+					<p>Kig ind og hør om dine muligheder hos 1×2 Biler ApS.</p>
+
+					<Image
+						src={LogoAcceptAuto}
+						alt="Accept Auto"
+						class="mt-8 max-w-xs h-auto"
+						loading="lazy"
+					/>
+				</div>
+				<aside>
+					<ContactCTA />
+				</aside>
+			</div>
+		</Container>
+	</Section>
+
+	<Section>
+		<Container>
+			<div class="grid grid-cols-1 lg:grid-cols-5 gap-12 items-start">
+				<div class="lg:col-span-2 prose">
+					<h2>Send os din forespørgsel</h2>
+					<p>
+						Udfyld formularen, så vender vi tilbage hurtigst muligt – typisk inden
+						næste hverdag.
+					</p>
+				</div>
+				<div class="lg:col-span-3">
+					<Contact />
+				</div>
+			</div>
+		</Container>
+	</Section>
+</Layout>

@@ -1,0 +1,96 @@
+---
+import { Image } from "astro:assets";
+import Layout from "~/layouts/Layout.astro";
+import Section from "~/components/Section.astro";
+import Container from "~/components/Container.astro";
+import Heading from "~/components/Heading.astro";
+import Button from "~/components/Button.astro";
+import Contact from "~/components/forms/Contact.astro";
+import ContactCTA from "~/components/ContactCTA.astro";
+import LogoCarGarantie from "~/assets/images/partners/cargarantie-logo.png";
+---
+
+<Layout
+	title="CarGarantie"
+	description="Med CarGarantie er du sikret mod dyre reparationer – i hele Europa og med fri kilometer. Vælg den dækning, der passer dig, og kør trygt videre med din brugte bil."
+>
+	<Section>
+		<Container>
+			<Heading class:list={"max-w-3xl"}>
+				<h1 slot="heading-title">CarGarantie</h1>
+				<p slot="heading-content">
+					<em
+						>Med CarGarantie er du sikret mod dyre reparationer – i hele Europa og med
+						fri kilometer. Vælg den dækning, der passer dig, og kør trygt videre med
+						din brugte bil.</em
+					>
+				</p>
+				<Button href="/kontakt-os" class:list={"mt-6"}>Kontakt os i dag</Button>
+			</Heading>
+		</Container>
+	</Section>
+
+	<Section class:list={"bg-gray-50"}>
+		<Container>
+			<div class="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
+				<div class="lg:col-span-2 prose">
+					<h2>På den sikre side!</h2>
+					<p>
+						Det er en tillidssag at købe en brugt bil. Derfor går 1×2 Biler heller ikke
+						på kompromis med din nye bil. Den er nemlig blevet testet og klargjort
+						professionelt, men selv om den bil er blevet passer og plejet, så kan der
+						opstå uventede situationer, der kræver dyre reparationer.
+					</p>
+					<p>
+						Med en CarGarantie er du sikre mod dyre reparationsomkostninger, og alt
+						efter hvor godt du vil dækkes ind, så sikrer CarGarantie dig mod de værste
+						økonomiske overraskelser. Du kan vælge mellem Basic, Comfort og Comfort
+						Plus.
+					</p>
+
+					<h3>Fordele ved en CarGarantie</h3>
+					<ul>
+						<li>Sikrer dig mod dyre reparationsomkostninger</li>
+						<li>Fri kilometer i hele forsikringsperioden</li>
+						<li>Dækker i hele Europa</li>
+						<li>Følger bilen ved salg</li>
+						<li>Øger værdien af din bil</li>
+					</ul>
+
+					<h4>Forlængelse af forsikringen</h4>
+					<p>
+						Kort tid inden forsikringen ophører, har du hos din forhandler mulighed
+						for at forlænge din dækning i yderligere 12 måneder.
+					</p>
+
+					<Image
+						src={LogoCarGarantie}
+						alt="CarGarantie"
+						class="mt-8 max-w-xs h-auto"
+						loading="lazy"
+					/>
+				</div>
+				<aside>
+					<ContactCTA />
+				</aside>
+			</div>
+		</Container>
+	</Section>
+
+	<Section>
+		<Container>
+			<div class="grid grid-cols-1 lg:grid-cols-5 gap-12 items-start">
+				<div class="lg:col-span-2 prose">
+					<h2>Send os din forespørgsel</h2>
+					<p>
+						Udfyld formularen, så vender vi tilbage hurtigst muligt – typisk inden
+						næste hverdag.
+					</p>
+				</div>
+				<div class="lg:col-span-3">
+					<Contact />
+				</div>
+			</div>
+		</Container>
+	</Section>
+</Layout>

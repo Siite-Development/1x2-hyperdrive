@@ -1,40 +1,82 @@
 ---
+interface Props {
+	heading?: string;
+	id?: string;
+}
+const { heading, id } = Astro.props as Props;
+const formId = id ?? "contact-form";
 ---
 
-<form action="#" method="POST">
-    <div class="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
-        <div>
-            <label for="first-name" class="block text-sm font-semibold">First name</label>
-            <div>
-                <input type="text" name="first-name" id="first-name" autocomplete="given-name" />
-            </div>
-        </div>
-        <div>
-            <label for="last-name" class="block text-sm font-semibold">Last name</label>
-            <div>
-                <input type="text" name="last-name" id="last-name" autocomplete="family-name" />
-            </div>
-        </div>
-        <div class="sm:col-span-2">
-            <label for="email" class="block text-sm font-semibold">Email</label>
-            <div>
-                <input type="email" name="email" id="email" autocomplete="email" />
-            </div>
-        </div>
-        <div class="sm:col-span-2">
-            <label for="phone-number" class="block text-sm font-semibold">Phone number</label>
-            <div>
-                <input type="tel" name="phone-number" id="phone-number" autocomplete="tel" />
-            </div>
-        </div>
-        <div class="sm:col-span-2">
-            <label for="message" class="block text-sm font-semibold">Message</label>
-            <div>
-                <textarea name="message" id="message" rows="4"></textarea>
-            </div>
-        </div>
-    </div>
-    <div class="mt-8 flex justify-end">
-        <button type="submit" class="button button-yellow">Send message</button>
-    </div>
+<form id={formId} action="/" method="POST" name="contact" data-netlify="true" netlify-honeypot="company-website" class="not-prose">
+	{heading && <h2 class="h3 mb-8">{heading}</h2>}
+	<input type="hidden" name="form-name" value="contact" />
+	<p class="hidden" aria-hidden="true">
+		<label>Udfyld ikke dette felt: <input name="company-website" tabindex="-1" autocomplete="off" /></label>
+	</p>
+
+	<div class="grid grid-cols-1 gap-x-8 gap-y-6 sm:grid-cols-2">
+		<div class="sm:col-span-2">
+			<label for={`${formId}-name`} class="block text-sm font-semibold">
+				Navn <span aria-hidden="true">*</span>
+			</label>
+			<input type="text" name="name" id={`${formId}-name`} autocomplete="name" required />
+		</div>
+
+		<div>
+			<label for={`${formId}-phone`} class="block text-sm font-semibold">Telefon</label>
+			<input
+				type="tel"
+				name="phone"
+				id={`${formId}-phone`}
+				autocomplete="tel"
+				placeholder="+45"
+			/>
+		</div>
+
+		<div>
+			<label for={`${formId}-email`} class="block text-sm font-semibold">
+				E-mail <span aria-hidden="true">*</span>
+			</label>
+			<input type="email" name="email" id={`${formId}-email`} autocomplete="email" required />
+		</div>
+
+		<div class="sm:col-span-2">
+			<label for={`${formId}-car`} class="block text-sm font-semibold">Ønsket bil</label>
+			<input type="text" name="desired-car" id={`${formId}-car`} />
+		</div>
+
+		<div class="sm:col-span-2">
+			<label for={`${formId}-message`} class="block text-sm font-semibold">Din besked</label>
+			<textarea
+				name="message"
+				id={`${formId}-message`}
+				rows="4"
+				maxlength="180"
+				data-message-input
+			></textarea>
+			<p class="mt-1 text-xs text-gray-500 text-right">
+				<span data-message-counter>0</span> / 180
+			</p>
+		</div>
+	</div>
+
+	<div class="mt-8">
+		<button type="submit" class="button button-primary w-full sm:w-auto">
+			Få et uforpligtende tilbud
+		</button>
+	</div>
 </form>
+
+<script>
+	function bindCounter(form: HTMLFormElement) {
+		const input = form.querySelector<HTMLTextAreaElement>("[data-message-input]");
+		const counter = form.querySelector<HTMLElement>("[data-message-counter]");
+		if (!input || !counter) return;
+		const update = () => {
+			counter.textContent = String(input.value.length);
+		};
+		input.addEventListener("input", update);
+		update();
+	}
+	document.querySelectorAll<HTMLFormElement>("form[name='contact']").forEach(bindCounter);
+</script>

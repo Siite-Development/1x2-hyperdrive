@@ -3,6 +3,15 @@
 
 @theme {
 	--font-inter: "Inter", "sans-serif";
+	--font-montserrat: "Montserrat", "sans-serif";
+
+	/* Brand palette — 1x2 Bilhus */
+	--color-brand-yellow: #ffff05;
+	--color-brand-yellow-soft: #fffbb3;
+	--color-brand-blue: #097baa;
+	--color-brand-blue-dark: #065c80;
+	--color-brand-link: #1e73be;
+
 	--breakpoint-sm: 640px;
 	--breakpoint-md: 768px;
 	--breakpoint-lg: 1024px;
@@ -83,7 +92,7 @@
 	}
 
 	a {
-		color: var(--color-gray-800);
+		color: var(--color-brand-link);
 	}
 
 	a:hover {
@@ -105,10 +114,10 @@
 	}
 
 	--tw-prose-body: var(--color-gray-800);
-	--tw-prose-headings: var(--color-gray-800);
+	--tw-prose-headings: var(--color-gray-900);
 	--tw-prose-lead: var(--color-gray-800);
-	--tw-prose-links: var(--color-gray-800);
-	--tw-prose-bold: var(--color-gray-800);
+	--tw-prose-links: var(--color-brand-link);
+	--tw-prose-bold: var(--color-gray-900);
 	--tw-prose-counters: var(--color-gray-800);
 	--tw-prose-bullets: var(--color-gray-800);
 	--tw-prose-hr: var(--color-gray-800);
@@ -179,7 +188,7 @@ h3,
 h4,
 h5,
 h6 {
-	@apply font-bold break-words;
+	@apply font-montserrat font-bold break-words;
 }
 
 h1,
@@ -217,23 +226,49 @@ p {
 }
 
 .button {
-	@apply inline-flex text-center items-center justify-center px-4 py-3 text-base transition duration-300 font-bold shadow-sm focus-visible:outline-2 focus-visible:outline-offset-2;
+	@apply inline-flex text-center items-center justify-center px-6 py-3 text-base transition duration-300 font-bold focus-visible:outline-2 focus-visible:outline-offset-2;
+	border-radius: 8px;
+}
+
+/* Primary brand CTA — yellow */
+.button-primary,
+.button-yellow {
+	background-color: var(--color-brand-yellow);
+	color: #121212;
+	@apply hover:brightness-95;
+}
+
+.button-primary:focus-visible,
+.button-yellow:focus-visible {
+	outline-color: var(--color-brand-yellow);
+}
+
+/* Secondary brand CTA — blue */
+.button-secondary {
+	background-color: var(--color-brand-blue);
+	color: #fff;
+	border-radius: 6px;
+	@apply hover:bg-[var(--color-brand-blue-dark)];
+}
+
+.button-secondary:focus-visible {
+	outline-color: var(--color-brand-blue);
+}
+
+.button-outline {
+	@apply bg-transparent hover:bg-gray-900/5 border border-gray-900 text-gray-900;
 }
 
 .button-white-outline {
-	@apply bg-transparent hover:bg-white/10 border border-white text-white focus-visible:outline-gray-800;
+	@apply bg-transparent hover:bg-white/10 border border-white text-white focus-visible:outline-white;
 }
 
 .button-black {
-	@apply bg-gray-800 hover:bg-gray-500 text-white focus-visible:outline-gray-800;
+	@apply bg-gray-900 hover:bg-gray-700 text-white focus-visible:outline-gray-900;
 }
 
 .button-white {
-	@apply bg-white hover:opacity-90 text-gray-800 focus-visible:outline-white;
-}
-
-.button-yellow {
-	@apply bg-yellow-200 hover:bg-yellow-100 text-gray-800 focus-visible:outline-yellow-200;
+	@apply bg-white hover:opacity-90 text-gray-900 focus-visible:outline-white;
 }
 
 .menu-item-active {
@@ -246,7 +281,7 @@ section.bg-white + section.bg-white > .container {
 
 /* Embla */
 .embla-thumbs__slide.embla-thumbs__slide--selected {
-	@apply border-yellow-400;
+	border-color: var(--color-brand-yellow);
 }
 
 .embla__button {
@@ -260,30 +295,19 @@ section.bg-white + section.bg-white > .container {
 }
 
 .card-car[data-car-on-sale="true"] mark.price-on-sale {
-	@apply font-bold text-lg bg-yellow-200 px-2;
+	background-color: var(--color-brand-yellow);
+	@apply font-bold text-lg px-2;
 }
 
 .card-car[data-car-on-sale="true"]:not([data-car-available="sold"]) .ribbon::after {
-	content: "On Sale";
-	@apply absolute z-20 bg-yellow-200 text-sm font-bold px-4 py-1;
+	content: "Tilbud";
+	background-color: var(--color-brand-yellow);
+	@apply absolute z-20 text-sm font-bold px-4 py-1;
 }
 
 .card-car[data-car-available="sold"] .ribbon::after {
-	content: "Sold";
+	content: "Solgt";
 	@apply absolute z-20 bg-red-200 text-sm font-bold px-4 py-1 text-red-900;
-}
-
-.embla-testimonials .embla__dot {
-	@apply appearance-none touch-manipulation inline-flex items-center justify-center cursor-pointer border-0 p-0 m-0 bg-transparent size-6 rounded-full;
-	-webkit-tap-highlight-color: transparent;
-}
-.embla-testimonials .embla__dot:after {
-	content: "";
-	@apply size-3 rounded-full flex items-center bg-gray-200;
-}
-.embla-testimonials .embla__dot--selected:after {
-	content: "";
-	@apply bg-gray-500;
 }
 
 /* Icons */
@@ -349,13 +373,37 @@ svg.icon-chevron-down {
 	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor' %3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='m4.5 12.75 6 6 9-13.5' /%3E%3C/svg%3E%0A");
 }
 
+.service-icon-clock::before {
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z'/%3E%3C/svg%3E");
+}
+
+.service-icon-car::before {
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0H15m0 0a1.5 1.5 0 0 1 3 0m-3 0a1.5 1.5 0 0 0 3 0m0 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 0 0-3.213-9.193 2.056 2.056 0 0 0-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 0 0-10.026 0 1.106 1.106 0 0 0-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12'/%3E%3C/svg%3E");
+}
+
+.service-icon-shield::before {
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M9 12.75 11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 0 1-1.043 3.296 3.745 3.745 0 0 1-3.296 1.043A3.745 3.745 0 0 1 12 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 0 1-3.296-1.043 3.745 3.745 0 0 1-1.043-3.296A3.745 3.745 0 0 1 3 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 0 1 1.043-3.296 3.746 3.746 0 0 1 3.296-1.043A3.746 3.746 0 0 1 12 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 0 1 3.296 1.043 3.746 3.746 0 0 1 1.043 3.296A3.745 3.745 0 0 1 21 12Z'/%3E%3C/svg%3E");
+}
+
+.service-icon-currency::before {
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M2.25 18.75a60.07 60.07 0 0 1 15.797 2.101c.727.198 1.453-.342 1.453-1.096V18.75M3.75 4.5v.75A.75.75 0 0 1 3 6h-.75m0 0v-.375c0-.621.504-1.125 1.125-1.125H20.25M2.25 6v9m18-10.5v.75c0 .414.336.75.75.75h.75m-1.5-1.5h.375c.621 0 1.125.504 1.125 1.125v9.75c0 .621-.504 1.125-1.125 1.125h-.375m1.5-1.5H21a.75.75 0 0 0-.75.75v.75m0 0H3.75m0 0h-.375a1.125 1.125 0 0 1-1.125-1.125V15m1.5 1.5v-.75A.75.75 0 0 0 3 15h-.75M15 10.5a3 3 0 1 1-6 0 3 3 0 0 1 6 0Zm3 0h.008v.008H18V10.5Zm-12 0h.008v.008H6V10.5Z'/%3E%3C/svg%3E");
+}
+
+.service-icon-key::before {
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M15.75 5.25a3 3 0 0 1 3 3m3 0a6 6 0 0 1-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1 1 21.75 8.25Z'/%3E%3C/svg%3E");
+}
+
+.service-icon-coffee::before {
+	background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke-width='1.5' stroke='currentColor'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M9 7.5h6m-6 3.75h6M3.75 21V8.689c0-.864.933-1.405 1.683-.977l1.961 1.122a1.125 1.125 0 0 0 1.106.008l3.302-1.838a1.125 1.125 0 0 1 1.107-.005l3.355 1.857c.34.188.752.188 1.092.005l2.142-1.176c.749-.41 1.665.13 1.665.987V21'/%3E%3C/svg%3E");
+}
+
 /* Print styles */
 header,
 footer {
 	@apply print:hidden;
 }
 
-/* inter-300 - latin */
+/* ---------- Inter ---------- */
 @font-face {
 	font-display: swap;
 	font-family: "Inter";
@@ -363,7 +411,6 @@ footer {
 	font-weight: 300;
 	src: url("/fonts/inter/inter-v18-latin-300.woff2") format("woff2");
 }
-/* inter-300italic - latin */
 @font-face {
 	font-display: swap;
 	font-family: "Inter";
@@ -371,7 +418,6 @@ footer {
 	font-weight: 300;
 	src: url("/fonts/inter/inter-v18-latin-300italic.woff2") format("woff2");
 }
-/* inter-regular - latin */
 @font-face {
 	font-display: swap;
 	font-family: "Inter";
@@ -379,7 +425,6 @@ footer {
 	font-weight: 400;
 	src: url("/fonts/inter/inter-v18-latin-regular.woff2") format("woff2");
 }
-/* inter-italic - latin */
 @font-face {
 	font-display: swap;
 	font-family: "Inter";
@@ -387,7 +432,6 @@ footer {
 	font-weight: 400;
 	src: url("/fonts/inter/inter-v18-latin-italic.woff2") format("woff2");
 }
-/* inter-500 - latin */
 @font-face {
 	font-display: swap;
 	font-family: "Inter";
@@ -395,7 +439,6 @@ footer {
 	font-weight: 500;
 	src: url("/fonts/inter/inter-v18-latin-500.woff2") format("woff2");
 }
-/* inter-500italic - latin */
 @font-face {
 	font-display: swap;
 	font-family: "Inter";
@@ -403,7 +446,6 @@ footer {
 	font-weight: 500;
 	src: url("/fonts/inter/inter-v18-latin-500italic.woff2") format("woff2");
 }
-/* inter-600 - latin */
 @font-face {
 	font-display: swap;
 	font-family: "Inter";
@@ -411,7 +453,6 @@ footer {
 	font-weight: 600;
 	src: url("/fonts/inter/inter-v18-latin-600.woff2") format("woff2");
 }
-/* inter-600italic - latin */
 @font-face {
 	font-display: swap;
 	font-family: "Inter";
@@ -419,7 +460,6 @@ footer {
 	font-weight: 600;
 	src: url("/fonts/inter/inter-v18-latin-600italic.woff2") format("woff2");
 }
-/* inter-700 - latin */
 @font-face {
 	font-display: swap;
 	font-family: "Inter";
@@ -427,7 +467,6 @@ footer {
 	font-weight: 700;
 	src: url("/fonts/inter/inter-v18-latin-700.woff2") format("woff2");
 }
-/* inter-700italic - latin */
 @font-face {
 	font-display: swap;
 	font-family: "Inter";
@@ -435,7 +474,6 @@ footer {
 	font-weight: 700;
 	src: url("/fonts/inter/inter-v18-latin-700italic.woff2") format("woff2");
 }
-/* inter-900 - latin */
 @font-face {
 	font-display: swap;
 	font-family: "Inter";
@@ -443,11 +481,40 @@ footer {
 	font-weight: 900;
 	src: url("/fonts/inter/inter-v18-latin-900.woff2") format("woff2");
 }
-/* inter-900italic - latin */
 @font-face {
 	font-display: swap;
 	font-family: "Inter";
 	font-style: italic;
 	font-weight: 900;
 	src: url("/fonts/inter/inter-v18-latin-900italic.woff2") format("woff2");
+}
+
+/* ---------- Montserrat (headings) ---------- */
+@font-face {
+	font-display: swap;
+	font-family: "Montserrat";
+	font-style: normal;
+	font-weight: 400;
+	src: url("/fonts/montserrat/montserrat-v31-latin-regular.woff2") format("woff2");
+}
+@font-face {
+	font-display: swap;
+	font-family: "Montserrat";
+	font-style: normal;
+	font-weight: 500;
+	src: url("/fonts/montserrat/montserrat-v31-latin-500.woff2") format("woff2");
+}
+@font-face {
+	font-display: swap;
+	font-family: "Montserrat";
+	font-style: normal;
+	font-weight: 600;
+	src: url("/fonts/montserrat/montserrat-v31-latin-600.woff2") format("woff2");
+}
+@font-face {
+	font-display: swap;
+	font-family: "Montserrat";
+	font-style: normal;
+	font-weight: 700;
+	src: url("/fonts/montserrat/montserrat-v31-latin-700.woff2") format("woff2");
 }

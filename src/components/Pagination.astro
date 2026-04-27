@@ -20,7 +20,7 @@ const paginationRange = generatePaginationRange(page, totalPages);
 function generateUrl(pageNum: number | string) {
 	const newParams = new URLSearchParams(searchParams);
 	newParams.set("page", pageNum.toString());
-	return `/cars?${newParams.toString()}`;
+	return `/biler-til-salg?${newParams.toString()}`;
 }
 ---
 
@@ -43,7 +43,7 @@ function generateUrl(pageNum: number | string) {
 								clip-rule="evenodd"
 							/>
 						</svg>
-						Previous
+						Forrige
 					</a>
 				)
 			}
@@ -57,7 +57,7 @@ function generateUrl(pageNum: number | string) {
 					) : (
 						<a
 							href={generateUrl(pageNumber)}
-							class={`inline-flex items-center text-center justify-center size-10 leading-none transition rounded-full ${pageNumber === page ? "bg-yellow-200" : "hover:bg-gray-100"}`}
+							class={`inline-flex items-center text-center justify-center size-10 leading-none transition rounded-full ${pageNumber === page ? "bg-[var(--color-brand-yellow)]" : "hover:bg-gray-100"}`}
 							aria-current={pageNumber === page ? "page" : undefined}
 						>
 							{pageNumber}
@@ -71,7 +71,7 @@ function generateUrl(pageNum: number | string) {
 			{
 				page < totalPages && (
 					<a href={generateUrl(page + 1)} class="inline-flex items-center transition hover:lg:translate-x-1 py-1 -my-1">
-						Next
+						Næste
 						<svg
 							class="ml-3 size-5"
 							viewBox="0 0 20 20"

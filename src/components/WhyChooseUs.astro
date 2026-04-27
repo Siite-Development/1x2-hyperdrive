@@ -1,0 +1,59 @@
+---
+import CardGridAlt from "~/components/CardGridAlt.astro";
+import { siteName } from "~/data/config";
+
+interface Props {
+	showHeading?: boolean;
+}
+const { showHeading = true } = Astro.props as Props;
+---
+
+{
+	showHeading && (
+		<div class="max-w-3xl mx-auto text-center mb-16">
+			<p class="text-sm font-bold tracking-widest uppercase text-gray-700 mb-2">
+				Derfor vælger kunder os
+			</p>
+			<h2 class="h2">{siteName}</h2>
+		</div>
+	)
+}
+
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-px bg-gray-200 ring-1 ring-gray-200">
+	<CardGridAlt
+		color="brand"
+		icon="clock"
+		title="Mere end 40 års erfaring"
+		description="Vi har solgt biler siden 1984 og ved, hvad der skaber tryghed."
+	/>
+	<CardGridAlt
+		color="brand"
+		icon="car"
+		title="Biler for enhver smag"
+		description="Stort udvalg – og vi skaffer bilen, hvis vi ikke har den på lager."
+	/>
+	<CardGridAlt
+		color="brand"
+		icon="shield"
+		title="Tryg rådgivning"
+		description="Vi guider dig gennem hele processen, så du kan træffe et sikkert valg."
+	/>
+	<CardGridAlt
+		color="brand"
+		icon="currency"
+		title="Attraktiv finansiering"
+		description="Fleksible løsninger, der gør bilkøbet overskueligt."
+	/>
+	<CardGridAlt
+		color="brand"
+		icon="key"
+		title="Biludlejning gennem Oscar"
+		description="Lej en bil nemt og hurtigt – Varebiler, flyttebiler, minibus og personbiler. Alt fra små biler til familiebiler."
+	/>
+	<CardGridAlt
+		color="brand"
+		icon="coffee"
+		title="Altid en varm velkomst"
+		description="Kaffen er frisk, og vi tager os tid til en snak om dine ønsker."
+	/>
+</div>

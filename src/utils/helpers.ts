@@ -26,10 +26,10 @@ export function getMileageUnit(): string {
 /**
  * Returns the label for mileage based on the unit system.
  *
- * @returns {string} The label, either "Mileage" for imperial or "Kilometerage" for metric.
+ * @returns {string} The label, either "Mileage" for imperial or "Kilometer kørt" for metric.
  */
 export function getMileageLabel(): string {
-	return unitSystem === "imperial" ? "Mileage" : "Kilometerage";
+	return unitSystem === "imperial" ? "Mileage" : "Kilometer kørt";
 }
 
 /**

@@ -1,0 +1,78 @@
+---
+import Layout from "~/layouts/Layout.astro";
+import Section from "~/components/Section.astro";
+import Container from "~/components/Container.astro";
+import Heading from "~/components/Heading.astro";
+import Button from "~/components/Button.astro";
+import Contact from "~/components/forms/Contact.astro";
+import ContactCTA from "~/components/ContactCTA.astro";
+---
+
+<Layout
+	title="Finansiering"
+	description="Hos 1X2 Biler hjælper vi dig med fleksible finansieringsløsninger, så du kan komme på vejen i din næste bil uden bekymringer."
+>
+	{/* Page intro */}
+	<Section>
+		<Container>
+			<Heading class:list={"max-w-3xl"}>
+				<h1 slot="heading-title">Finansiering der gør bilkøbet nemmere</h1>
+				<p slot="heading-content">
+					<em
+						>Hos 1X2 Biler hjælper vi dig med fleksible finansieringsløsninger, så
+						du kan komme på vejen i din næste bil uden bekymringer.</em
+					>
+				</p>
+				<Button href="/kontakt-os" class:list={"mt-6"}>Kontakt os i dag</Button>
+			</Heading>
+		</Container>
+	</Section>
+
+	{/* Body + ContactCTA */}
+	<Section class:list={"bg-gray-50"}>
+		<Container>
+			<div class="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
+				<div class="lg:col-span-2 prose">
+					<h2>Hos 1x2 Biler har vi et bredt udvalg af muligheder for billån</h2>
+					<p>
+						At have en bred vifte af finansieringsmuligheder til billån giver dig
+						fleksibilitet til at finde den bedste løsning, der passer til dine
+						økonomiske behov og præferencer.
+					</p>
+					<p>
+						Med adskillige finansieringsmuligheder til rådighed kan du vælge mellem
+						forskellige långivere og betingelser, så du kan finde den laveste rente og
+						de mest favorable vilkår.
+					</p>
+					<p>Det er noget vi gerne vil hjælpe med her hos 1×2 Biler.</p>
+					<p>
+						Vi tilbyder finansiering i samarbejde med <a href="/accept-auto"
+							>Accept Auto</a
+						>.
+					</p>
+				</div>
+				<aside>
+					<ContactCTA />
+				</aside>
+			</div>
+		</Container>
+	</Section>
+
+	{/* Form */}
+	<Section>
+		<Container>
+			<div class="grid grid-cols-1 lg:grid-cols-5 gap-12 items-start">
+				<div class="lg:col-span-2 prose">
+					<h2>Send os din forespørgsel</h2>
+					<p>
+						Udfyld formularen, så vender vi tilbage hurtigst muligt – typisk inden
+						næste hverdag.
+					</p>
+				</div>
+				<div class="lg:col-span-3">
+					<Contact />
+				</div>
+			</div>
+		</Container>
+	</Section>
+</Layout>

@@ -1,0 +1,98 @@
+---
+import Layout from "~/layouts/Layout.astro";
+import Section from "~/components/Section.astro";
+import Container from "~/components/Container.astro";
+import Heading from "~/components/Heading.astro";
+import Button from "~/components/Button.astro";
+import Contact from "~/components/forms/Contact.astro";
+import ContactCTA from "~/components/ContactCTA.astro";
+import WhyChooseUs from "~/components/WhyChooseUs.astro";
+---
+
+<Layout
+	title="Om os"
+	description="Erfaring og tryghed siden 1984. Siden 1984 har vi hjulpet kunder med at finde den rigtige bil – med tryghed og ærlig rådgivning."
+>
+	<Section>
+		<Container>
+			<Heading class:list={"max-w-3xl"}>
+				<h1 slot="heading-title">Erfaring og tryghed siden 1984</h1>
+				<p slot="heading-content">
+					<em
+						>Siden 1984 har vi hjulpet kunder med at finde den rigtige bil – med
+						tryghed og ærlig rådgivning.</em
+					>
+				</p>
+				<Button href="/kontakt-os" class:list={"mt-6"}>Kontakt os i dag</Button>
+			</Heading>
+		</Container>
+	</Section>
+
+	<Section class:list={"bg-gray-50"}>
+		<Container>
+			<div class="grid grid-cols-1 lg:grid-cols-3 gap-12 items-start">
+				<div class="lg:col-span-2 prose">
+					<h2>1X2 Biler.</h2>
+					<p>
+						Firmaet startede i 1984 i den midtsjællandske provinsby Borup. Allerede
+						året efter rykkede firmaet til nye lokaliteter på Hovedvejen i Osted nær
+						Roskilde.
+					</p>
+					<p>
+						I 2004 flyttede vi så lokaliteterne til firmaets nye hovedsæde, lige uden
+						for Næstved i retning mod Ringsted.
+					</p>
+
+					<h3>Biler for enhver smag.</h3>
+					<p>
+						1X2 Biler ApS er specialiseret i salg af brugte biler. Vi stræber altid
+						efter at have noget, der passer til vores kunders individuelle behov og
+						præferencer. Har vi ikke den bil du ønsker på lager, så kan vi skaffe den
+						hjem til dig.
+					</p>
+					<p>
+						Vi giver professionel rådgivning og assistance gennem hele købsprocessen.
+						Vores mål er at sikre, at vores kunder træffer velinformerede beslutninger
+						og får den bedst mulige biloplevelse.
+					</p>
+					<p>
+						Book et møde med vores erfarne og venlige personale, for en
+						uforpligtende bilsnak eller prøvekørsel. Vi bestræber os på at skabe en
+						tryg og behagelig købsoplevelse for vores kunder.
+					</p>
+					<p>
+						Udover salg af brugte biler, tilbyder vi også biludlejning gennem Oscar
+						Biludlejning
+					</p>
+					<p>Kaffen er altid frisk – Og det er vi også.</p>
+				</div>
+				<aside>
+					<ContactCTA />
+				</aside>
+			</div>
+		</Container>
+	</Section>
+
+	<Section>
+		<Container>
+			<WhyChooseUs />
+		</Container>
+	</Section>
+
+	<Section class:list={"bg-gray-50"}>
+		<Container>
+			<div class="grid grid-cols-1 lg:grid-cols-5 gap-12 items-start">
+				<div class="lg:col-span-2 prose">
+					<h2>Har du spørgsmål?</h2>
+					<p>
+						Send os en besked, så vender vi tilbage hurtigst muligt – typisk inden
+						næste hverdag.
+					</p>
+				</div>
+				<div class="lg:col-span-3">
+					<Contact />
+				</div>
+			</div>
+		</Container>
+	</Section>
+</Layout>

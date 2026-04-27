@@ -1,139 +1,55 @@
 import type { MainMenuItem, MenuNavigation } from "~/types";
+import { externalLinks } from "~/data/config";
 
 export const menuMain: MainMenuItem[] = [
 	{
 		id: "home",
-		label: "Home",
+		label: "Forside",
 		url: "/",
 	},
 	{
 		id: "cars",
-		label: "Cars",
-		url: "/cars",
+		label: "Biler",
+		url: "/biler-til-salg",
 	},
 	{
-		id: "about",
-		label: "About",
-		url: "/about-us",
-		submenu: [{ id: "testimonials", label: "Testimonials", url: "/about-us/testimonials" }],
-	},
-	{
-		id: "services",
-		label: "Services",
-		url: "/services",
+		id: "finansiering",
+		label: "Finansiering",
+		url: "/finansiering",
 		submenu: [
-			{ id: "repairs", label: "Repairs", url: "/services/repairs" },
-			{ id: "maintenance", label: "Maintenance", url: "/services/maintenance" },
-			{ id: "car-sales", label: "Car Sales", url: "/services/car-sales" },
+			{ id: "finansiering", label: "Finansiering", url: "/finansiering" },
+			{ id: "accept-auto", label: "Accept Auto", url: "/accept-auto" },
+			{ id: "cargarantie", label: "CarGarantie", url: "/cargarantie" },
 		],
 	},
 	{
-		id: "blog",
-		label: "Blog",
-		url: "/blog",
+		id: "about",
+		label: "Om os",
+		url: "/om-os",
+	},
+	{
+		id: "contact",
+		label: "Kontakt os",
+		url: "/kontakt-os",
 	},
 ];
 
-export const menuNavigation: MenuNavigation = {
-	prettyName: "Navigation",
+// Footer "Genveje" (shortcuts) column
+export const menuShortcuts: MenuNavigation = {
+	prettyName: "Genveje",
 	items: [
-		{
-			name: "Home",
-			url: "/",
-		},
-		{
-			name: "Cars",
-			url: "/cars",
-		},
-		{
-			name: "About Us",
-			url: "/about-us",
-		},
-		{
-			name: "Services",
-			url: "/services",
-		},
-		{
-			name: "Blog",
-			url: "/blog",
-		},
+		{ name: "Biler", url: "/biler-til-salg" },
+		{ name: "Finansiering", url: "/finansiering" },
+		{ name: "Om os", url: "/om-os" },
+		{ name: "Kontakt os", url: "/kontakt-os" },
+		{ name: "Oscar Biludlejning", url: externalLinks.oscarRentalShort, isExternal: true },
 	],
 };
 
-export const menuService: MenuNavigation = {
-	prettyName: "Service",
-	items: [
-		{
-			name: "Home",
-			url: "/",
-		},
-		{
-			name: "Cars",
-			url: "/cars",
-		},
-		{
-			name: "About Us",
-			url: "/about-us",
-		},
-		{
-			name: "Services",
-			url: "/services",
-		},
-		{
-			name: "Blog",
-			url: "/blog",
-		},
-	],
-};
-
-export const menuMisc: MenuNavigation = {
-	prettyName: "Miscellaneous",
-	items: [
-		{
-			name: "Home",
-			url: "/",
-		},
-		{
-			name: "Cars",
-			url: "/cars",
-		},
-		{
-			name: "About Us",
-			url: "/about-us",
-		},
-		{
-			name: "Services",
-			url: "/services",
-		},
-		{
-			name: "Blog",
-			url: "/blog",
-		},
-	],
-};
+// Footer "Kontaktinfo" column is rendered inline from config (phone/email/address),
+// so we don't model it as a menu.
 
 export const menuLegal: MenuNavigation = {
-	prettyName: "Legal",
-	items: [
-		{
-			name: "Home",
-			url: "/",
-		},
-		{
-			name: "Cars",
-			url: "/cars",
-		},
-		{
-			name: "About Us",
-			url: "/about-us",
-		},
-		{
-			name: "Services",
-			url: "/services",
-		},
-		{
-			name: "Blog",
-			url: "/blog",
-		},
-	],
+	prettyName: "",
+	items: [{ name: "Privatlivspolitik", url: "/privatlivspolitik" }],
 };

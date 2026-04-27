@@ -19,6 +19,19 @@ const allowedParams = [
 	"year",
 ];
 
+const paramLabels: Record<string, string> = {
+	make: "Bilmærke",
+	color: "Farve",
+	price: "Pris",
+	model: "Model",
+	condition: "Stand",
+	fuelType: "Drivmiddel",
+	transmission: "Geartype",
+	bodyType: "Karrosseri",
+	mileage: "Km",
+	year: "Årgang",
+};
+
 const filteredParams = params.filter(([key]) => allowedParams.includes(key));
 ---
 
@@ -28,10 +41,10 @@ const filteredParams = params.filter(([key]) => allowedParams.includes(key));
 			filteredParams.map(([key, value]: [string, string]) => (
 				<li class="rounded-full bg-white lg:bg-gray-800 text-gray-800 lg:text-white px-2.5 py-1 text-xs lg:text-sm flex items-center gap-x-1 lg:gap-x-2 max-lg:opacity-90">
 					<button type="button" class={`preset-remove-${key}`}>
-						<span class="sr-only">Remove filter</span>
+						<span class="sr-only">Fjern filter</span>
 						<IconClose class="size-2.5 rounded-full bg-gray-800 lg:bg-white text-white lg:text-gray-800" />
 					</button>
-					<span>{key}:</span>
+					<span>{paramLabels[key] ?? key}:</span>
 					<span class="font-bold">{value}</span>
 				</li>
 			))

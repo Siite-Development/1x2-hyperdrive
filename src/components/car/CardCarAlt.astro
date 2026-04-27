@@ -3,7 +3,7 @@ import type { Car } from "~/types";
 import { Image } from "astro:assets";
 import CarHighlights from "~/components/car/CardHighlights.astro";
 import CardPrice from "~/components/car/CardPrice.astro";
-import IconLogo from "~/assets/images/icons/logo.svg";
+import Logo from "~/assets/images/brand/logo.png";
 const { car } = Astro.props as { car: Car };
 ---
 
@@ -11,9 +11,9 @@ const { car } = Astro.props as { car: Car };
 	data-car-id={car.id}
 	data-car-on-sale={car.data.general.salePrice ? "true" : "false"}
 	data-car-available={car.data.general.availability}
-	class="card-car bg-white shadow overflow-hidden xxl:transition xxl:border-transparent xxl:border-b-4 hover:lg:border-yellow-300"
+	class="card-car bg-white shadow overflow-hidden xxl:transition xxl:border-transparent xxl:border-b-4 hover:lg:border-[var(--color-brand-yellow)]"
 >
-	<a href={`/view/${car.id}`} class="relative isolate flex flex-col gap-8 h-full">
+	<a href={`/biler-til-salg/${car.id}`} class="relative isolate flex flex-col gap-8 h-full">
 		<div class="relative aspect-[4/3] lg:shrink-0 ribbon">
 			{
 				car.data.image ? (
@@ -24,8 +24,8 @@ const { car } = Astro.props as { car: Car };
 					/>
 				) : (
 					<div class="absolute inset-0 text-gray-400 size-full bg-gray-100 flex flex-col gap-4 items-center justify-center">
-						<IconLogo class="h-24" />
-						<span class="text-gray-400 font-bold italic">Coming Soon</span>
+						<Image src={Logo} alt="" class="h-16 w-auto opacity-60" />
+						<span class="text-gray-400 font-bold italic">Kommer snart</span>
 					</div>
 				)
 			}

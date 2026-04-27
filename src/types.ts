@@ -2,17 +2,11 @@ import type { CollectionEntry } from "astro:content";
 import type { colorClasses } from "./components/CardGridAlt.astro";
 import type { pillColors } from "./components/Pill.astro";
 
-export type Blog = CollectionEntry<"blog">;
 export type Car = CollectionEntry<"cars">;
-export type Testimonial = CollectionEntry<"testimonials">;
 
 // Components
 export interface ClassNameProps {
 	class?: string;
-}
-
-export interface ArticleProps {
-	contain?: boolean;
 }
 
 export interface ButtonProps extends ClassNameProps {
@@ -21,11 +15,6 @@ export interface ButtonProps extends ClassNameProps {
 	newtab?: boolean;
 	As?: "a" | "button";
 	type?: "button" | "submit" | "reset";
-}
-
-export interface CardBlogPost {
-	post: Blog;
-	index: number;
 }
 
 export interface CardGridAltProps {
@@ -40,28 +29,8 @@ export interface ContainerProps extends ClassNameProps {
 	contain?: boolean;
 }
 
-export interface FaqProps extends ClassNameProps {
-	items: {
-		question: string;
-		answer: string;
-	}[];
-}
-
 export interface FilterBarMobileProps {
 	params: [string, string][];
-}
-
-export interface GridProps {
-	columns?: number;
-}
-
-export interface GridItemProps {
-	span?: number;
-	image?: ImageMetadata;
-	imageAlt?: string;
-	As?: "div" | "a";
-	link?: string;
-	xl?: boolean;
 }
 
 export interface HeroProps {
@@ -94,22 +63,6 @@ export interface ShowCarsProps {
 	ui?: "list" | "grid";
 }
 
-export interface Stat {
-	title: string;
-	value: string;
-	animateNumber?: boolean;
-	animateFrom?: number;
-}
-
-export interface StatsProps {
-	items: Stat[];
-}
-
-export interface WideImageProps extends ClassNameProps {
-	image: ImageMetadata;
-	alt: string;
-}
-
 export interface LoanCalculatorProps {
 	price: number;
 }
@@ -139,11 +92,6 @@ export interface WidgetLoanProps {
 	price: number;
 }
 
-export interface TestimonialProps {
-	id?: string;
-}
-
-
 // Menus
 export interface MainMenuItem {
 	id: string;
@@ -159,5 +107,6 @@ export interface MenuNavigation {
 	items: {
 		name: string;
 		url: string;
+		isExternal?: boolean;
 	}[];
 }
