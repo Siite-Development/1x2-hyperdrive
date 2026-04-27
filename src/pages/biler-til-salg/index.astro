@@ -1,7 +1,7 @@
 ---
 export const prerender = false;
 
-import { type CollectionEntry } from "astro:content";
+import { getCollection, type CollectionEntry } from "astro:content";
 import { siteName, priceSteps, defaultPaginationSize } from "~/data/config";
 import Layout from "~/layouts/Layout.astro";
 import Section from "~/components/Section.astro";
@@ -16,22 +16,140 @@ import PresetBar from "~/components/PresetBar.astro";
 import FilterBarMobile from "~/components/FilterBarMobile.astro";
 
 type Car = CollectionEntry<"cars">;
-
-const APIURL = new URL("/api/getFilteredCars.json", Astro.url);
+type CarData = Car["data"];
+type CarFilter = (data: CarData) => boolean;
 
 const searchParamsValue = Astro.url.searchParams;
 const searchParamsArray = Array.from(searchParamsValue);
 
-APIURL.search = searchParamsValue.toString();
+const make = searchParamsValue.get("make") ?? undefined;
+const model = searchParamsValue.get("model") ?? undefined;
+const yearFrom = searchParamsValue.get("yearFrom") ?? undefined;
+const yearTo = searchParamsValue.get("yearTo") ?? undefined;
+const price = searchParamsValue.get("price") ?? undefined;
+const mileageFrom = searchParamsValue.get("mileageFrom") ?? undefined;
+const mileageTo = searchParamsValue.get("mileageTo") ?? undefined;
+const fuelType = searchParamsValue.get("fuelType") ?? undefined;
+const bodyType = searchParamsValue.get("bodyType") ?? undefined;
+const transmission = searchParamsValue.get("transmission") ?? undefined;
+const color = searchParamsValue.get("color") ?? undefined;
+const condition = searchParamsValue.get("condition") ?? undefined;
+const sort = searchParamsValue.get("sort") ?? undefined;
+const search = searchParamsValue.get("search") ?? undefined;
 
-const response = await fetch(APIURL);
-let allCars: Car[] = [];
-if (response.ok) {
-	const responseData = await response.json();
-	allCars = responseData.allCars || [];
-} else if (response.status !== 404) {
-	// Log non-404 errors; treat as empty to avoid a 500
-	console.error("getFilteredCars error:", response.status, await response.text());
+const filters: CarFilter[] = [];
+
+if (make && make !== "all") {
+	filters.push((data) => data.general.make === make);
+}
+
+if (model && model !== "all" && make && make !== "all") {
+	filters.push((data) => data.general.model === model);
+}
+
+if (yearFrom) {
+	filters.push((data) => data.history.year >= Number.parseInt(yearFrom));
+}
+
+if (yearTo) {
+	filters.push((data) => data.history.year <= Number.parseInt(yearTo));
+}
+
+if (price && price !== "all") {
+	const [minPrice, maxPrice] = price.split("-").map(Number);
+	filters.push((data) => {
+		const regularPrice = data.general.price;
+		const salePrice = data.general.salePrice;
+		if (maxPrice) {
+			return (
+				(regularPrice >= minPrice && regularPrice <= maxPrice) ||
+				(salePrice !== undefined && salePrice >= minPrice && salePrice <= maxPrice)
+			);
+		}
+		return regularPrice >= minPrice || (salePrice !== undefined && salePrice >= minPrice);
+	});
+}
+
+if (mileageFrom) {
+	filters.push((data) => data.history.mileage >= Number.parseInt(mileageFrom));
+}
+
+if (mileageTo) {
+	filters.push((data) => data.history.mileage <= Number.parseInt(mileageTo));
+}
+
+if (fuelType && fuelType !== "all") {
+	filters.push((data) => data.efficiency.fuelType === fuelType);
+}
+
+if (bodyType && bodyType !== "all") {
+	filters.push((data) => data.general.bodyType === bodyType);
+}
+
+if (transmission && transmission !== "all") {
+	filters.push((data) => data.technical.transmission === transmission);
+}
+
+if (color && color !== "all") {
+	filters.push((data) => data.exterior.color === color);
+}
+
+if (condition && condition !== "all") {
+	filters.push((data) => data.general.condition === condition);
+}
+
+if (search) {
+	const searchQueries = search
+		.toLowerCase()
+		.replace(/[^a-zA-Z0-9\s]/g, "")
+		.split(" ");
+
+	filters.push((data) => {
+		const searchableFields = [
+			data.general.make,
+			data.general.model,
+			data.general.bodyType,
+			data.exterior.color,
+			data.technical.transmission,
+			data.history.year.toString(),
+			data.general.condition,
+		];
+		return searchQueries.every((query) =>
+			searchableFields.some((field) => field?.toLowerCase().includes(query) ?? false)
+		);
+	});
+}
+
+const allCars: Car[] = await getCollection("cars", ({ data }) => {
+	return filters.every((filter) => filter(data));
+});
+
+if (sort) {
+	const order = sort.endsWith("-asc") ? 1 : -1;
+	allCars.sort((a, b) => {
+		let aValue: number = 0;
+		let bValue: number = 0;
+		switch (sort) {
+			case "price-asc":
+			case "price-desc":
+				aValue = a.data.general.salePrice ?? a.data.general.price;
+				bValue = b.data.general.salePrice ?? b.data.general.price;
+				break;
+			case "mileage-asc":
+			case "mileage-desc":
+				aValue = a.data.history.mileage;
+				bValue = b.data.history.mileage;
+				break;
+			case "year-asc":
+			case "year-desc":
+				aValue = a.data.history.year;
+				bValue = b.data.history.year;
+				break;
+		}
+		if (aValue < bValue) return -1 * order;
+		if (aValue > bValue) return 1 * order;
+		return 0;
+	});
 }
 
 const makes = [...new Set(allCars.map((car: Car) => car.data.general.make))].sort();
@@ -47,8 +165,8 @@ const sideBarData = {
 
 const page = parseInt(searchParamsValue.get("page") || "1");
 const pageSize = defaultPaginationSize;
-const totalPages = Math.ceil(Array.isArray(allCars) ? allCars.length / pageSize : 0);
-const paginatedCars = Array.isArray(allCars) ? allCars.slice((page - 1) * pageSize, page * pageSize) : [];
+const totalPages = Math.ceil(allCars.length / pageSize);
+const paginatedCars = allCars.slice((page - 1) * pageSize, page * pageSize);
 ---
 
 <Layout
