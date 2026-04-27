@@ -10,7 +10,7 @@ export default defineConfig({
 	site: "https://1x2biler.dk",
 	base: "/",
 	integrations: [mdx(), playformInline({ Critters: true })],
-	output: "static",
+	output: "hybrid",
 	devToolbar: {
 		enabled: false,
 	},
