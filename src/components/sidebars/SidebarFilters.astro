@@ -1,5 +1,4 @@
 ---
-export const prerender = false;
 import { bodyTypes, fuelTypes, transmission, conditions } from "~/content.config";
 import { getPrice, getMakeModelSet } from "~/utils/helpers";
 import IconReset from "~/assets/images/icons/reset.svg";
@@ -192,6 +191,9 @@ const { data } = Astro.props;
 			const modelSelect = form.elements.namedItem("model") as HTMLSelectElement;
 			const urlParams = new URLSearchParams(window.location.search);
 
+			// Use inline data instead of API calls
+			const makesModels: { make: string; models: string[] }[] = (window as any).__makesModels || [];
+
 			for (const [key, value] of urlParams.entries()) {
 				const input = form.elements.namedItem(key) as HTMLSelectElement;
 				const clearButton = document.getElementById(`clear-input-${key}`)! as HTMLButtonElement;
@@ -205,27 +207,18 @@ const { data } = Astro.props;
 			}
 
 			if (makeSelect.value !== "all") {
-				try {
-					const url = new URL("/api/getModels.json", window.location.origin);
-					url.searchParams.append("make", makeSelect.value);
-
-					const response = await fetch(url);
-					const models = await response.json();
-
+				const entry = makesModels.find((m) => m.make === makeSelect.value);
+				if (entry) {
 					modelSelect.innerHTML = '<option value="all">Alle</option>';
-
-					models.forEach((model: string) => {
+					entry.models.forEach((model: string) => {
 						const option = document.createElement("option");
 						option.value = model;
 						option.textContent = model;
 						modelSelect.appendChild(option);
 					});
-
 					if (urlParams.has("model")) {
 						modelSelect.value = urlParams.get("model")!;
 					}
-				} catch (error) {
-					console.error("Error fetching models:", error);
 				}
 			}
 
@@ -243,47 +236,46 @@ const { data } = Astro.props;
 					modelSelect.innerHTML = '<option value="all">Alle</option>';
 
 					if (target.value !== "all") {
-						try {
-							const url = new URL("/api/getModels.json", window.location.origin);
-							url.searchParams.append("make", target.value);
-
-							const response = await fetch(url);
-							const models = await response.json();
-
-							models.forEach((model: string) => {
+						const entry = makesModels.find((m) => m.make === target.value);
+						if (entry) {
+							entry.models.forEach((model: string) => {
 								const option = document.createElement("option");
 								option.value = model;
 								option.textContent = model;
 								modelSelect.appendChild(option);
 							});
-						} catch (error) {
-							console.error("Error fetching models:", error);
 						}
 					}
 				}
 
-				try {
-					const url = new URL("/api/getFilteredCars.json", window.location.origin);
+				// Count matching cars from DOM
+				const carList = document.getElementById("car-list");
+				if (carList) {
+					const allCards = Array.from(carList.querySelectorAll<HTMLElement>("[data-car-id]"));
 					const formData = new FormData(form);
-
-					url.search = "";
-
+					const filters: Record<string, string> = {};
 					for (const [key, value] of formData.entries()) {
-						if (value !== "all") {
-							url.searchParams.append(key, value.toString());
+						if (value !== "all") filters[key] = value.toString();
+					}
+
+					const count = allCards.filter((card) => {
+						if (filters.make && card.dataset.make !== filters.make) return false;
+						if (filters.model && card.dataset.model !== filters.model) return false;
+						if (filters.price) {
+							const [minP, maxP] = filters.price.split("-").map(Number);
+							const cp = parseInt(card.dataset.price || "0");
+							if (maxP && (cp < minP || cp > maxP)) return false;
+							if (!maxP && cp < minP) return false;
 						}
-					}
+						if (filters.fuelType && card.dataset.fuel !== filters.fuelType) return false;
+						if (filters.bodyType && card.dataset.body !== filters.bodyType) return false;
+						if (filters.transmission && card.dataset.transmission !== filters.transmission) return false;
+						if (filters.color && card.dataset.color !== filters.color) return false;
+						if (filters.condition && card.dataset.condition !== filters.condition) return false;
+						return true;
+					}).length;
 
-					if (url.searchParams.has("page")) {
-						url.searchParams.delete("page");
-					}
-
-					const response = await fetch(url);
-					const data = await response.json();
-
-					resultFound.textContent = `(${data?.length ?? 0})`;
-				} catch (error) {
-					console.error(error);
+					resultFound.textContent = `(${count})`;
 				}
 			});
 

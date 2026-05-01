@@ -9,7 +9,7 @@ const currency = getCurrencySymbol();
 const { price } = Astro.props;
 ---
 
-<form id="form-loan-calculator">
+<form id="form-loan-calculator" data-interest-rate={interestRate}>
 	<div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8">
 		<div class="lg:col-span-1">
 			<label for="amount">Lånebeløb</label>
@@ -116,36 +116,44 @@ const { price } = Astro.props;
 	</div>
 </form>
 
-<script>
-	import { actions } from "astro:actions";
-
+<script is:inline>
 	document.addEventListener("astro:page-load", function () {
-		const form = document.getElementById("form-loan-calculator") as HTMLFormElement;
-		const monthlyPaymentField = document.getElementById("loan-monthly-payment") as HTMLSpanElement;
-		const totalPaymentField = document.getElementById("loan-total-payment") as HTMLSpanElement;
-		const LoanCalculatorResult = document.getElementById("loan-calculator-result") as HTMLDivElement;
-		const wrapper = document.getElementById("form-loan-calculator-wrapper") as HTMLDivElement;
+		const form = document.getElementById("form-loan-calculator");
+		const monthlyPaymentField = document.getElementById("loan-monthly-payment");
+		const totalPaymentField = document.getElementById("loan-total-payment");
+		const LoanCalculatorResult = document.getElementById("loan-calculator-result");
+		const wrapper = document.getElementById("form-loan-calculator-wrapper");
 
-		form?.addEventListener("submit", async (event) => {
+		if (!form) return;
+
+		form.addEventListener("submit", function (event) {
 			event.preventDefault();
 
 			const formData = new FormData(form);
+			const amount = parseFloat(formData.get("amount")) || 0;
+			const duration = parseFloat(formData.get("duration")) || 0;
+			const finalinstallment = parseFloat(formData.get("finalinstallment")) || 0;
 
-			try {
-				const { data, error } = await actions.getMonthlyInstallment(formData);
+			if (amount <= 0 || duration <= 0) return;
 
-				if (error) {
-					console.error("Error:", error);
-				} else {
-					monthlyPaymentField.textContent = data.monthlyInstallment;
-					totalPaymentField.textContent = data.totalPayment;
-					LoanCalculatorResult.style.opacity = "1";
-					LoanCalculatorResult.classList.remove("max-lg:h-0");
-					LoanCalculatorResult.classList.add("max-lg:h-auto");
-					wrapper.classList.add("lg:pb-16", "lg:mb-16");
-				}
-			} catch (error) {
-				console.error("Fetch error:", error);
+			const interestRate = parseFloat(form.dataset.interestRate || "6.5");
+			const monthlyInterestRate = interestRate / 100 / 12;
+			const principal = amount - finalinstallment;
+			const monthlyInstallment =
+				(principal * monthlyInterestRate) / (1 - Math.pow(1 + monthlyInterestRate, -duration));
+			const totalPayment = monthlyInstallment * duration + finalinstallment;
+
+			const fmt = new Intl.NumberFormat("da-DK", { style: "currency", currency: "DKK", minimumFractionDigits: 0, maximumFractionDigits: 0 });
+
+			if (monthlyPaymentField) monthlyPaymentField.textContent = fmt.format(monthlyInstallment);
+			if (totalPaymentField) totalPaymentField.textContent = fmt.format(totalPayment);
+			if (LoanCalculatorResult) {
+				LoanCalculatorResult.style.opacity = "1";
+				LoanCalculatorResult.classList.remove("max-lg:h-0");
+				LoanCalculatorResult.classList.add("max-lg:h-auto");
+			}
+			if (wrapper) {
+				wrapper.classList.add("lg:pb-16", "lg:mb-16");
 			}
 		});
 	});

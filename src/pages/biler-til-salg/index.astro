@@ -1,9 +1,7 @@
 ---
-export const prerender = false;
-
-import { type CollectionEntry } from "astro:content";
+import { getCollection } from "astro:content";
 import { siteName, priceSteps, defaultPaginationSize } from "~/data/config";
-import { getFilteredCars } from "~/utils/carFilters";
+import { getMakeModelSet } from "~/utils/helpers";
 import Layout from "~/layouts/Layout.astro";
 import Section from "~/components/Section.astro";
 import Container from "~/components/Container.astro";
@@ -11,32 +9,10 @@ import Heading from "~/components/Heading.astro";
 import Button from "~/components/Button.astro";
 import CardCar from "~/components/car/CardCar.astro";
 import SidebarFilters from "~/components/sidebars/SidebarFilters.astro";
-import Pagination from "~/components/Pagination.astro";
 import SearchSort from "~/components/SearchSort.astro";
-import PresetBar from "~/components/PresetBar.astro";
 import FilterBarMobile from "~/components/FilterBarMobile.astro";
 
-type Car = CollectionEntry<"cars">;
-
-const searchParamsValue = Astro.url.searchParams;
-const searchParamsArray = Array.from(searchParamsValue);
-
-const allCars = await getFilteredCars({
-	make: searchParamsValue.get("make") ?? undefined,
-	model: searchParamsValue.get("model") ?? undefined,
-	yearFrom: searchParamsValue.get("yearFrom") ?? undefined,
-	yearTo: searchParamsValue.get("yearTo") ?? undefined,
-	price: searchParamsValue.get("price") ?? undefined,
-	mileageFrom: searchParamsValue.get("mileageFrom") ?? undefined,
-	mileageTo: searchParamsValue.get("mileageTo") ?? undefined,
-	fuelType: searchParamsValue.get("fuelType") ?? undefined,
-	bodyType: searchParamsValue.get("bodyType") ?? undefined,
-	transmission: searchParamsValue.get("transmission") ?? undefined,
-	color: searchParamsValue.get("color") ?? undefined,
-	condition: searchParamsValue.get("condition") ?? undefined,
-	sort: searchParamsValue.get("sort") ?? undefined,
-	search: searchParamsValue.get("search") ?? undefined,
-});
+const allCars = await getCollection("cars", ({ data }) => data.misc?.hidden !== true);
 
 const makes = [...new Set(allCars.map((car) => car.data.general.make))].sort();
 const colors = [...new Set(allCars.map((car) => car.data.exterior.color))].sort();
@@ -49,10 +25,8 @@ const sideBarData = {
 	priceSteps,
 };
 
-const page = parseInt(searchParamsValue.get("page") || "1");
-const pageSize = defaultPaginationSize;
-const totalPages = Math.ceil(Array.isArray(allCars) ? allCars.length / pageSize : 0);
-const paginatedCars = Array.isArray(allCars) ? allCars.slice((page - 1) * pageSize, page * pageSize) : [];
+const makesModels = await getMakeModelSet();
+const makesModelsJson = JSON.stringify(makesModels);
 ---
 
 <Layout
@@ -78,7 +52,7 @@ const paginatedCars = Array.isArray(allCars) ? allCars.slice((page - 1) * pageSi
 	<Section class:list={"bg-gray-50 max-lg:max-w-svw max-lg:overflow-hidden"}>
 		<Container class:list={"pt-0 max-lg:px-0 max-lg:max-w-full"}>
 			<div class="flex flex-col lg:flex-row">
-				<FilterBarMobile params={searchParamsArray} />
+				<FilterBarMobile params={[]} />
 
 				<SidebarFilters data={sideBarData} />
 
@@ -86,31 +60,44 @@ const paginatedCars = Array.isArray(allCars) ? allCars.slice((page - 1) * pageSi
 					<div class="lg:px-8">
 						<SearchSort />
 
-						<div class="max-lg:hidden">
-							<PresetBar params={searchParamsArray} />
-						</div>
+						<div id="preset-bar-desktop" class="max-lg:hidden"></div>
 
-						<ul class="grid grid-cols-1 lg:gap-16">
+						<ul id="car-list" class="grid grid-cols-1 lg:gap-16">
 							{
-								paginatedCars.length > 0 ? (
-									paginatedCars.map((car) => <CardCar car={car} />)
-								) : (
-									<li class="text-center text-gray-500">Ingen biler fundet</li>
-								)
+								allCars.map((car) => (
+									<CardCar
+										car={car}
+										data-make={car.data.general.make}
+										data-model={car.data.general.model}
+										data-year={car.data.history.year}
+										data-price={car.data.general.salePrice ?? car.data.general.price}
+										data-mileage={car.data.history.mileage}
+										data-fuel={car.data.efficiency.fuelType}
+										data-body={car.data.general.bodyType}
+										data-transmission={car.data.technical.transmission}
+										data-color={car.data.exterior.color}
+										data-condition={car.data.general.condition ?? ""}
+										data-title={car.data.title}
+										data-options={car.data.options?.join(",") ?? ""}
+									/>
+								))
 							}
 						</ul>
 
-						{
-							paginatedCars.length > 0 && totalPages > 1 && (
-								<Pagination page={page} totalPages={totalPages} searchParams={searchParamsValue} />
-							)
-						}
+						<p id="no-results" class="text-center text-gray-500 hidden">Ingen biler fundet</p>
+
+						<div id="pagination-container"></div>
 					</div>
 				</main>
 			</div>
 		</Container>
 	</Section>
 </Layout>
+
+<script is:inline define:vars={{ makesModelsJson, defaultPaginationSize }}>
+	window.__makesModels = JSON.parse(makesModelsJson);
+	window.__pageSize = defaultPaginationSize;
+</script>
 
 <script>
 	document.addEventListener("astro:page-load", function () {
@@ -125,6 +112,130 @@ const paginatedCars = Array.isArray(allCars) ? allCars.slice((page - 1) * pageSi
 
 			buttonModalFilterClose?.addEventListener("click", () => {
 				sidebarFiltersMobile.classList.add("max-lg:opacity-0", "max-lg:pointer-events-none");
+			});
+		}
+
+		// Client-side filtering
+		const carList = document.getElementById("car-list");
+		const noResults = document.getElementById("no-results");
+		const paginationContainer = document.getElementById("pagination-container");
+		if (!carList) return;
+
+		const allCards = Array.from(carList.querySelectorAll<HTMLElement>("[data-car-id]"));
+		const params = new URLSearchParams(window.location.search);
+
+		const make = params.get("make");
+		const model = params.get("model");
+		const yearFrom = params.get("yearFrom");
+		const yearTo = params.get("yearTo");
+		const price = params.get("price");
+		const mileageFrom = params.get("mileageFrom");
+		const mileageTo = params.get("mileageTo");
+		const fuelType = params.get("fuelType");
+		const bodyType = params.get("bodyType");
+		const transmission = params.get("transmission");
+		const color = params.get("color");
+		const condition = params.get("condition");
+		const sort = params.get("sort");
+		const search = params.get("search");
+		const page = parseInt(params.get("page") || "1");
+		const pageSize = (window as any).__pageSize || 12;
+
+		// Filter
+		const filtered = allCards.filter((card) => {
+			if (make && make !== "all" && card.dataset.make !== make) return false;
+			if (model && model !== "all" && card.dataset.model !== model) return false;
+			if (yearFrom && parseInt(card.dataset.year || "0") < parseInt(yearFrom)) return false;
+			if (yearTo && parseInt(card.dataset.year || "0") > parseInt(yearTo)) return false;
+			if (price && price !== "all") {
+				const [minP, maxP] = price.split("-").map(Number);
+				const cardPrice = parseInt(card.dataset.price || "0");
+				if (maxP && (cardPrice < minP || cardPrice > maxP)) return false;
+				if (!maxP && cardPrice < minP) return false;
+			}
+			if (mileageFrom && parseInt(card.dataset.mileage || "0") < parseInt(mileageFrom)) return false;
+			if (mileageTo && parseInt(card.dataset.mileage || "0") > parseInt(mileageTo)) return false;
+			if (fuelType && fuelType !== "all" && card.dataset.fuel !== fuelType) return false;
+			if (bodyType && bodyType !== "all" && card.dataset.body !== bodyType) return false;
+			if (transmission && transmission !== "all" && card.dataset.transmission !== transmission) return false;
+			if (color && color !== "all" && card.dataset.color !== color) return false;
+			if (condition && condition !== "all" && card.dataset.condition !== condition) return false;
+			if (search) {
+				const queries = search.toLowerCase().replace(/[^a-zA-Z0-9\s]/g, "").split(" ");
+				const fields = [card.dataset.make, card.dataset.model, card.dataset.body, card.dataset.color, card.dataset.transmission, card.dataset.year, card.dataset.condition].map(s => (s || "").toLowerCase());
+				if (!queries.every(q => fields.some(f => f.includes(q)))) return false;
+			}
+			return true;
+		});
+
+		// Sort
+		if (sort && sort !== "all") {
+			const order = sort.endsWith("-asc") ? 1 : -1;
+			filtered.sort((a, b) => {
+				let aVal = 0, bVal = 0;
+				if (sort.startsWith("price")) { aVal = parseInt(a.dataset.price || "0"); bVal = parseInt(b.dataset.price || "0"); }
+				else if (sort.startsWith("mileage")) { aVal = parseInt(a.dataset.mileage || "0"); bVal = parseInt(b.dataset.mileage || "0"); }
+				else if (sort.startsWith("year")) { aVal = parseInt(a.dataset.year || "0"); bVal = parseInt(b.dataset.year || "0"); }
+				return (aVal - bVal) * order;
+			});
+		}
+
+		// Hide all, show matching page
+		const totalPages = Math.ceil(filtered.length / pageSize);
+		const paginatedIds = new Set(filtered.slice((page - 1) * pageSize, page * pageSize).map(c => c));
+
+		allCards.forEach(card => {
+			card.style.display = paginatedIds.has(card) ? "" : "none";
+		});
+
+		if (noResults) {
+			noResults.classList.toggle("hidden", filtered.length > 0);
+		}
+
+		// Update filter count
+		const resultFound = document.getElementById("filter-result-found");
+		if (resultFound) resultFound.textContent = `(${filtered.length})`;
+
+		// Render pagination
+		if (paginationContainer && filtered.length > 0 && totalPages > 1) {
+			const makeUrl = (p: number) => {
+				const u = new URLSearchParams(params);
+				u.set("page", p.toString());
+				return `/biler-til-salg?${u.toString()}`;
+			};
+			let html = '<div class="mt-8 bg-white ring-1 ring-gray-100 py-4"><nav class="flex items-center justify-between px-8 font-medium text-base">';
+			html += '<div class="flex w-0 flex-1">';
+			if (page > 1) html += `<a href="${makeUrl(page - 1)}" class="inline-flex items-center transition hover:lg:-translate-x-1 py-1 -my-1"><svg class="mr-3 size-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a.75.75 0 0 1-.75.75H4.66l2.1 1.95a.75.75 0 1 1-1.02 1.1l-3.5-3.25a.75.75 0 0 1 0-1.1l3.5-3.25a.75.75 0 1 1 1.02 1.1l-2.1 1.95h12.59A.75.75 0 0 1 18 10Z" clip-rule="evenodd"></path></svg>Forrige</a>`;
+			html += '</div><div class="hidden md:flex text-lg gap-x-2">';
+			for (let i = 1; i <= totalPages; i++) {
+				html += `<a href="${makeUrl(i)}" class="inline-flex items-center text-center justify-center size-10 leading-none transition rounded-full ${i === page ? 'bg-[var(--color-brand-yellow)]' : 'hover:bg-gray-100'}" ${i === page ? 'aria-current="page"' : ''}>${i}</a>`;
+			}
+			html += '</div><div class="flex w-0 flex-1 justify-end">';
+			if (page < totalPages) html += `<a href="${makeUrl(page + 1)}" class="inline-flex items-center transition hover:lg:translate-x-1 py-1 -my-1">Næste<svg class="ml-3 size-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M2 10a.75.75 0 0 1 .75-.75h12.59l-2.1-1.95a.75.75 0 1 1 1.02-1.1l3.5 3.25a.75.75 0 0 1 0 1.1l-3.5 3.25a.75.75 0 1 1-1.02-1.1l2.1-1.95H2.75A.75.75 0 0 1 2 10Z" clip-rule="evenodd"></path></svg></a>`;
+			html += '</div></nav></div>';
+			paginationContainer.innerHTML = html;
+		}
+
+		// Build preset bar
+		const presetDesktop = document.getElementById("preset-bar-desktop");
+		const paramLabels: Record<string, string> = { make: "Bilmærke", color: "Farve", price: "Pris", model: "Model", condition: "Stand", fuelType: "Drivmiddel", transmission: "Geartype", bodyType: "Karrosseri" };
+		const allowedKeys = Object.keys(paramLabels);
+		const activeFilters = Array.from(params.entries()).filter(([k, v]) => allowedKeys.includes(k) && v !== "all");
+		if (presetDesktop && activeFilters.length > 0) {
+			let presetHtml = '<div class="my-4"><ul class="flex lg:flex-wrap gap-2">';
+			activeFilters.forEach(([key, value]) => {
+				presetHtml += `<li class="rounded-full bg-gray-800 text-white px-2.5 py-1 text-sm flex items-center gap-x-2"><button type="button" class="preset-remove" data-key="${key}"><span class="sr-only">Fjern filter</span><svg class="size-2.5 rounded-full bg-white text-gray-800" viewBox="0 0 16 16" fill="currentColor"><path d="M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94 5.28 4.22Z" /></svg></button><span>${paramLabels[key] ?? key}:</span><span class="font-bold">${value}</span></li>`;
+			});
+			presetHtml += '</ul></div>';
+			presetDesktop.innerHTML = presetHtml;
+			presetDesktop.querySelectorAll(".preset-remove").forEach(btn => {
+				btn.addEventListener("click", () => {
+					const key = (btn as HTMLElement).dataset.key!;
+					const u = new URLSearchParams(params);
+					u.delete(key);
+					u.delete("page");
+					window.location.href = `/biler-til-salg?${u.toString()}`;
+				});
 			});
 		}
 	});

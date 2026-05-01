@@ -1,8 +1,8 @@
 # build output
 dist/
 
-# Vercel output — the function’s dist/ must be committed
-!.vercel/output/functions/_render.func/dist/
+# Vercel
+.vercel/
 
 # generated types
 .astro/
@@ -25,6 +25,3 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
-
-# Local Netlify folder
-.netlify
