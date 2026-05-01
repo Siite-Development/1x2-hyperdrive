@@ -1,5 +1,5 @@
 ---
-import { address, phone, email } from "~/data/config";
+import { address, phone, email, hours } from "~/data/config";
 import Layout from "~/layouts/Layout.astro";
 import Section from "~/components/Section.astro";
 import Container from "~/components/Container.astro";
@@ -9,8 +9,8 @@ import Contact from "~/components/forms/Contact.astro";
 ---
 
 <Layout
-	title="Kontakt os"
-	description="Kontakt 1x2 Biler i Herlufmagle. Ring til os på +45 57 67 47 17 eller send en e-mail til info@1x2biler.dk."
+	title="Kontakt 1x2 Biler | Ring Nu eller Skriv til Os"
+	description="Har du spørgsmål eller vil du se en bil? Kontakt 1x2 Biler i Herlufmagle på tlf. 57 67 47 17. Vi svarer typisk inden næste hverdag – klik for at komme i kontakt!"
 >
 	<Section>
 		<Container>
@@ -47,10 +47,36 @@ import Contact from "~/components/forms/Contact.astro";
 				</a>
 			</div>
 
-			<address class="mt-12 not-italic text-base text-gray-600">
-				{address.street}<br />
-				{address.zip} {address.city}
-			</address>
+			<div class="mt-12 grid grid-cols-1 md:grid-cols-5 gap-8 items-start">
+				<div class="md:col-span-3">
+					<h2 class="h5 mb-4">Find os her</h2>
+					<iframe
+						src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3693.8683296028084!2d11.75202509789592!3d55.29986095696682!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x4652961377bfd019%3A0x38c0530f9df4e3ad!2s1x2%20Bilhus!5e1!3m2!1sen!2sdk!4v1777645102767!5m2!1sen!2sdk"
+						class="w-full h-[300px] border-0"
+						loading="lazy"
+						referrerpolicy="no-referrer-when-downgrade"
+						allowfullscreen>
+					</iframe>
+				</div>
+				<div class="md:col-span-2">
+					<h2 class="h5 mb-4">Adresse</h2>
+					<address class="not-italic text-base text-gray-600 space-y-1">
+						<p>{address.street}</p>
+						<p>{address.zip} {address.city}</p>
+						<p>{address.country}</p>
+					</address>
+					<h2 class="h5 mt-6 mb-4">Åbningstider</h2>
+					<ul class="text-base text-gray-600 space-y-1">
+						<li class="flex justify-between gap-4"><span>Mandag</span><span>{hours.monday}</span></li>
+						<li class="flex justify-between gap-4"><span>Tirsdag</span><span>{hours.tuesday}</span></li>
+						<li class="flex justify-between gap-4"><span>Onsdag</span><span>{hours.wednesday}</span></li>
+						<li class="flex justify-between gap-4"><span>Torsdag</span><span>{hours.thursday}</span></li>
+						<li class="flex justify-between gap-4"><span>Fredag</span><span>{hours.friday}</span></li>
+						<li class="flex justify-between gap-4"><span>Lørdag</span><span>{hours.saturday}</span></li>
+						<li class="flex justify-between gap-4"><span>Søndag</span><span>{hours.sunday}</span></li>
+					</ul>
+				</div>
+			</div>
 		</Container>
 	</Section>
 

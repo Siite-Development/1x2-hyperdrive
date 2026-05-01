@@ -6,8 +6,8 @@
 	--font-montserrat: "Montserrat", "sans-serif";
 
 	/* Brand palette — 1x2 Bilhus */
-	--color-brand-yellow: #ffff05;
-	--color-brand-yellow-soft: #fffbb3;
+	--color-brand-yellow: #f5c518;
+	--color-brand-yellow-soft: #fdf0b3;
 	--color-brand-blue: #097baa;
 	--color-brand-blue-dark: #065c80;
 	--color-brand-link: #1e73be;
@@ -517,4 +517,28 @@ footer {
 	font-style: normal;
 	font-weight: 700;
 	src: url("/fonts/montserrat/montserrat-v31-latin-700.woff2") format("woff2");
+}
+
+/* Mobile bottom navigation */
+.mobile-bottom-nav-item {
+	@apply flex flex-col items-center justify-center gap-0.5 py-2.5 text-[11px] font-medium text-gray-600 hover:text-gray-900 active:bg-gray-50 transition;
+}
+
+.safe-area-bottom {
+	padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+/* View transitions — prevent black flash between pages */
+::view-transition-old(root) {
+	animation: none;
+}
+::view-transition-new(root) {
+	animation: none;
+}
+
+/* Prevent content from being hidden behind the fixed bottom nav on mobile */
+@media (max-width: 1023px) {
+	body {
+		padding-bottom: 4.5rem;
+	}
 }

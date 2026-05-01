@@ -30,9 +30,9 @@ const makesModelsJson = JSON.stringify(makesModels);
 ---
 
 <Layout
-	title="Biler til salg"
-	pageTitle={`Biler til salg | ${siteName}`}
-	description="Vi har altid et udvalg af brugte biler på lager – og kan skaffe den helt rigtige, hvis du ikke finder den her."
+	title="Se Vores Brugte Biler | Køb Trygt hos 1x2 Biler"
+	pageTitle={`Se Vores Brugte Biler | Køb Trygt hos ${siteName}`}
+	description="Find din næste brugte bil hos 1x2 Biler. Stort udvalg, gennemgået kvalitet og fleksibel finansiering. Klik her og se bilerne – eller få en uforpligtende snak!"
 >
 	<Section>
 		<Container>
@@ -49,8 +49,8 @@ const makesModelsJson = JSON.stringify(makesModels);
 		</Container>
 	</Section>
 
-	<Section class:list={"bg-gray-50 max-lg:max-w-svw max-lg:overflow-hidden"}>
-		<Container class:list={"pt-0 max-lg:px-0 max-lg:max-w-full"}>
+	<Section id="resultater" class:list={"bg-gray-50 max-lg:max-w-svw max-lg:overflow-hidden scroll-mt-16"}>
+		<Container class:list={"pt-0 max-lg:max-w-full"}>
 			<div class="flex flex-col lg:flex-row">
 				<FilterBarMobile params={[]} />
 
@@ -62,24 +62,10 @@ const makesModelsJson = JSON.stringify(makesModels);
 
 						<div id="preset-bar-desktop" class="max-lg:hidden"></div>
 
-						<ul id="car-list" class="grid grid-cols-1 lg:gap-16">
+						<ul id="car-list" class="grid grid-cols-1 gap-6 lg:gap-16">
 							{
 								allCars.map((car) => (
-									<CardCar
-										car={car}
-										data-make={car.data.general.make}
-										data-model={car.data.general.model}
-										data-year={car.data.history.year}
-										data-price={car.data.general.salePrice ?? car.data.general.price}
-										data-mileage={car.data.history.mileage}
-										data-fuel={car.data.efficiency.fuelType}
-										data-body={car.data.general.bodyType}
-										data-transmission={car.data.technical.transmission}
-										data-color={car.data.exterior.color}
-										data-condition={car.data.general.condition ?? ""}
-										data-title={car.data.title}
-										data-options={car.data.options?.join(",") ?? ""}
-									/>
+									<CardCar car={car} />
 								))
 							}
 						</ul>
@@ -101,6 +87,7 @@ const makesModelsJson = JSON.stringify(makesModels);
 
 <script>
 	document.addEventListener("astro:page-load", function () {
+		// Mobile filter modal
 		const buttonModalFilterOpen = document.getElementById("button-modal-filter-open");
 		const buttonModalFilterClose = document.getElementById("button-modal-filter-close");
 		const sidebarFiltersMobile = document.getElementById("sidebar-filter");
@@ -109,134 +96,248 @@ const makesModelsJson = JSON.stringify(makesModels);
 			buttonModalFilterOpen?.addEventListener("click", () => {
 				sidebarFiltersMobile.classList.remove("max-lg:opacity-0", "max-lg:pointer-events-none");
 			});
-
 			buttonModalFilterClose?.addEventListener("click", () => {
 				sidebarFiltersMobile.classList.add("max-lg:opacity-0", "max-lg:pointer-events-none");
 			});
 		}
 
-		// Client-side filtering
+		// Elements
 		const carList = document.getElementById("car-list");
 		const noResults = document.getElementById("no-results");
 		const paginationContainer = document.getElementById("pagination-container");
+		const resultFound = document.getElementById("filter-result-found");
+		const presetDesktop = document.getElementById("preset-bar-desktop");
+		const filterForm = document.getElementById("form-filter") as HTMLFormElement | null;
+		const searchInput = document.getElementById("search") as HTMLInputElement | null;
+		const sortSelect = document.getElementById("sort") as HTMLSelectElement | null;
+		const sortSelectMobile = document.getElementById("sort-mobile") as HTMLSelectElement | null;
+
 		if (!carList) return;
 
 		const allCards = Array.from(carList.querySelectorAll<HTMLElement>("[data-car-id]"));
-		const params = new URLSearchParams(window.location.search);
-
-		const make = params.get("make");
-		const model = params.get("model");
-		const yearFrom = params.get("yearFrom");
-		const yearTo = params.get("yearTo");
-		const price = params.get("price");
-		const mileageFrom = params.get("mileageFrom");
-		const mileageTo = params.get("mileageTo");
-		const fuelType = params.get("fuelType");
-		const bodyType = params.get("bodyType");
-		const transmission = params.get("transmission");
-		const color = params.get("color");
-		const condition = params.get("condition");
-		const sort = params.get("sort");
-		const search = params.get("search");
-		const page = parseInt(params.get("page") || "1");
 		const pageSize = (window as any).__pageSize || 12;
+		let currentPage = 1;
 
-		// Filter
-		const filtered = allCards.filter((card) => {
-			if (make && make !== "all" && card.dataset.make !== make) return false;
-			if (model && model !== "all" && card.dataset.model !== model) return false;
-			if (yearFrom && parseInt(card.dataset.year || "0") < parseInt(yearFrom)) return false;
-			if (yearTo && parseInt(card.dataset.year || "0") > parseInt(yearTo)) return false;
-			if (price && price !== "all") {
-				const [minP, maxP] = price.split("-").map(Number);
-				const cardPrice = parseInt(card.dataset.price || "0");
-				if (maxP && (cardPrice < minP || cardPrice > maxP)) return false;
-				if (!maxP && cardPrice < minP) return false;
+		// Read current state from form + search + sort
+		function getFilters() {
+			const f: Record<string, string> = {};
+			if (filterForm) {
+				const fd = new FormData(filterForm);
+				for (const [key, value] of fd.entries()) {
+					const v = value.toString();
+					if (v && v !== "all") f[key] = v;
+				}
 			}
-			if (mileageFrom && parseInt(card.dataset.mileage || "0") < parseInt(mileageFrom)) return false;
-			if (mileageTo && parseInt(card.dataset.mileage || "0") > parseInt(mileageTo)) return false;
-			if (fuelType && fuelType !== "all" && card.dataset.fuel !== fuelType) return false;
-			if (bodyType && bodyType !== "all" && card.dataset.body !== bodyType) return false;
-			if (transmission && transmission !== "all" && card.dataset.transmission !== transmission) return false;
-			if (color && color !== "all" && card.dataset.color !== color) return false;
-			if (condition && condition !== "all" && card.dataset.condition !== condition) return false;
-			if (search) {
-				const queries = search.toLowerCase().replace(/[^a-zA-Z0-9\s]/g, "").split(" ");
-				const fields = [card.dataset.make, card.dataset.model, card.dataset.body, card.dataset.color, card.dataset.transmission, card.dataset.year, card.dataset.condition].map(s => (s || "").toLowerCase());
+			const searchVal = searchInput?.value?.trim();
+			if (searchVal) f.search = searchVal;
+			const sortVal = sortSelect?.value || sortSelectMobile?.value;
+			if (sortVal && sortVal !== "all") f.sort = sortVal;
+			return f;
+		}
+
+		function matchCard(card: HTMLElement, filters: Record<string, string>): boolean {
+			if (filters.make && card.dataset.make !== filters.make) return false;
+			if (filters.model && card.dataset.model !== filters.model) return false;
+			if (filters.yearFrom && parseInt(card.dataset.year || "0") < parseInt(filters.yearFrom)) return false;
+			if (filters.yearTo && parseInt(card.dataset.year || "0") > parseInt(filters.yearTo)) return false;
+			if (filters.price) {
+				const [minP, maxP] = filters.price.split("-").map(Number);
+				const cp = parseInt(card.dataset.price || "0");
+				if (maxP && (cp < minP || cp > maxP)) return false;
+				if (!maxP && cp < minP) return false;
+			}
+			if (filters.mileageFrom && parseInt(card.dataset.mileage || "0") < parseInt(filters.mileageFrom)) return false;
+			if (filters.mileageTo && parseInt(card.dataset.mileage || "0") > parseInt(filters.mileageTo)) return false;
+			if (filters.fuelType && card.dataset.fuel !== filters.fuelType) return false;
+			if (filters.bodyType && card.dataset.body !== filters.bodyType) return false;
+			if (filters.transmission && card.dataset.transmission !== filters.transmission) return false;
+			if (filters.color && card.dataset.color !== filters.color) return false;
+			if (filters.condition && card.dataset.condition !== filters.condition) return false;
+			if (filters.search) {
+				const queries = filters.search.toLowerCase().replace(/[^a-zA-Z0-9æøåÆØÅ\s]/g, "").split(" ");
+				const fields = [card.dataset.make, card.dataset.model, card.dataset.body, card.dataset.color, card.dataset.transmission, card.dataset.year, card.dataset.condition, card.dataset.title, card.dataset.options].map(s => (s || "").toLowerCase());
 				if (!queries.every(q => fields.some(f => f.includes(q)))) return false;
 			}
 			return true;
-		});
+		}
 
-		// Sort
-		if (sort && sort !== "all") {
-			const order = sort.endsWith("-asc") ? 1 : -1;
-			filtered.sort((a, b) => {
-				let aVal = 0, bVal = 0;
-				if (sort.startsWith("price")) { aVal = parseInt(a.dataset.price || "0"); bVal = parseInt(b.dataset.price || "0"); }
-				else if (sort.startsWith("mileage")) { aVal = parseInt(a.dataset.mileage || "0"); bVal = parseInt(b.dataset.mileage || "0"); }
-				else if (sort.startsWith("year")) { aVal = parseInt(a.dataset.year || "0"); bVal = parseInt(b.dataset.year || "0"); }
-				return (aVal - bVal) * order;
+		function applyFilters(resetPage = true) {
+			if (resetPage) currentPage = 1;
+			const filters = getFilters();
+
+			// Filter
+			const filtered = allCards.filter(card => matchCard(card, filters));
+
+			// Sort
+			if (filters.sort) {
+				const order = filters.sort.endsWith("-asc") ? 1 : -1;
+				filtered.sort((a, b) => {
+					let aVal = 0, bVal = 0;
+					if (filters.sort!.startsWith("price")) { aVal = parseInt(a.dataset.price || "0"); bVal = parseInt(b.dataset.price || "0"); }
+					else if (filters.sort!.startsWith("mileage")) { aVal = parseInt(a.dataset.mileage || "0"); bVal = parseInt(b.dataset.mileage || "0"); }
+					else if (filters.sort!.startsWith("year")) { aVal = parseInt(a.dataset.year || "0"); bVal = parseInt(b.dataset.year || "0"); }
+					return (aVal - bVal) * order;
+				});
+			}
+
+			// Paginate
+			const totalPages = Math.ceil(filtered.length / pageSize);
+			if (currentPage > totalPages && totalPages > 0) currentPage = totalPages;
+			const pageItems = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
+			const pageSet = new Set(pageItems);
+
+			// Reorder DOM + show/hide
+			allCards.forEach(card => { card.style.display = "none"; });
+			pageItems.forEach(card => {
+				card.style.display = "";
+				carList!.appendChild(card); // Move to end in correct order
 			});
+
+			// No results message
+			noResults?.classList.toggle("hidden", filtered.length > 0);
+
+			// Update count
+			if (resultFound) resultFound.textContent = `(${filtered.length})`;
+
+			// Pagination
+			renderPagination(totalPages, filters);
+
+			// Preset bar
+			renderPresets(filters);
+
+			// Update URL without reload
+			syncUrl(filters);
 		}
 
-		// Hide all, show matching page
-		const totalPages = Math.ceil(filtered.length / pageSize);
-		const paginatedIds = new Set(filtered.slice((page - 1) * pageSize, page * pageSize).map(c => c));
+		function renderPagination(totalPages: number, filters: Record<string, string>) {
+			if (!paginationContainer) return;
+			if (totalPages <= 1) { paginationContainer.innerHTML = ""; return; }
 
-		allCards.forEach(card => {
-			card.style.display = paginatedIds.has(card) ? "" : "none";
-		});
-
-		if (noResults) {
-			noResults.classList.toggle("hidden", filtered.length > 0);
-		}
-
-		// Update filter count
-		const resultFound = document.getElementById("filter-result-found");
-		if (resultFound) resultFound.textContent = `(${filtered.length})`;
-
-		// Render pagination
-		if (paginationContainer && filtered.length > 0 && totalPages > 1) {
-			const makeUrl = (p: number) => {
-				const u = new URLSearchParams(params);
-				u.set("page", p.toString());
-				return `/biler-til-salg?${u.toString()}`;
-			};
-			let html = '<div class="mt-8 bg-white ring-1 ring-gray-100 py-4"><nav class="flex items-center justify-between px-8 font-medium text-base">';
+			let html = '<div class="mt-8 bg-white ring-1 ring-gray-100 py-4 max-lg:rounded-xl"><nav class="flex items-center justify-between px-8 font-medium text-base">';
 			html += '<div class="flex w-0 flex-1">';
-			if (page > 1) html += `<a href="${makeUrl(page - 1)}" class="inline-flex items-center transition hover:lg:-translate-x-1 py-1 -my-1"><svg class="mr-3 size-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a.75.75 0 0 1-.75.75H4.66l2.1 1.95a.75.75 0 1 1-1.02 1.1l-3.5-3.25a.75.75 0 0 1 0-1.1l3.5-3.25a.75.75 0 1 1 1.02 1.1l-2.1 1.95h12.59A.75.75 0 0 1 18 10Z" clip-rule="evenodd"></path></svg>Forrige</a>`;
+			if (currentPage > 1) html += `<button type="button" data-page="${currentPage - 1}" class="pagination-btn inline-flex items-center transition hover:lg:-translate-x-1 py-1 -my-1"><svg class="mr-3 size-6" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M18 10a.75.75 0 0 1-.75.75H4.66l2.1 1.95a.75.75 0 1 1-1.02 1.1l-3.5-3.25a.75.75 0 0 1 0-1.1l3.5-3.25a.75.75 0 1 1 1.02 1.1l-2.1 1.95h12.59A.75.75 0 0 1 18 10Z" clip-rule="evenodd"></path></svg>Forrige</button>`;
 			html += '</div><div class="hidden md:flex text-lg gap-x-2">';
 			for (let i = 1; i <= totalPages; i++) {
-				html += `<a href="${makeUrl(i)}" class="inline-flex items-center text-center justify-center size-10 leading-none transition rounded-full ${i === page ? 'bg-[var(--color-brand-yellow)]' : 'hover:bg-gray-100'}" ${i === page ? 'aria-current="page"' : ''}>${i}</a>`;
+				html += `<button type="button" data-page="${i}" class="pagination-btn inline-flex items-center text-center justify-center size-10 leading-none transition rounded-full ${i === currentPage ? 'bg-[var(--color-brand-yellow)]' : 'hover:bg-gray-100'}" ${i === currentPage ? 'aria-current="page"' : ''}>${i}</button>`;
 			}
 			html += '</div><div class="flex w-0 flex-1 justify-end">';
-			if (page < totalPages) html += `<a href="${makeUrl(page + 1)}" class="inline-flex items-center transition hover:lg:translate-x-1 py-1 -my-1">Næste<svg class="ml-3 size-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M2 10a.75.75 0 0 1 .75-.75h12.59l-2.1-1.95a.75.75 0 1 1 1.02-1.1l3.5 3.25a.75.75 0 0 1 0 1.1l-3.5 3.25a.75.75 0 1 1-1.02-1.1l2.1-1.95H2.75A.75.75 0 0 1 2 10Z" clip-rule="evenodd"></path></svg></a>`;
+			if (currentPage < totalPages) html += `<button type="button" data-page="${currentPage + 1}" class="pagination-btn inline-flex items-center transition hover:lg:translate-x-1 py-1 -my-1">Næste<svg class="ml-3 size-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M2 10a.75.75 0 0 1 .75-.75h12.59l-2.1-1.95a.75.75 0 1 1 1.02-1.1l3.5 3.25a.75.75 0 0 1 0 1.1l-3.5 3.25a.75.75 0 1 1-1.02-1.1l2.1-1.95H2.75A.75.75 0 0 1 2 10Z" clip-rule="evenodd"></path></svg></button>`;
 			html += '</div></nav></div>';
 			paginationContainer.innerHTML = html;
-		}
 
-		// Build preset bar
-		const presetDesktop = document.getElementById("preset-bar-desktop");
-		const paramLabels: Record<string, string> = { make: "Bilmærke", color: "Farve", price: "Pris", model: "Model", condition: "Stand", fuelType: "Drivmiddel", transmission: "Geartype", bodyType: "Karrosseri" };
-		const allowedKeys = Object.keys(paramLabels);
-		const activeFilters = Array.from(params.entries()).filter(([k, v]) => allowedKeys.includes(k) && v !== "all");
-		if (presetDesktop && activeFilters.length > 0) {
-			let presetHtml = '<div class="my-4"><ul class="flex lg:flex-wrap gap-2">';
-			activeFilters.forEach(([key, value]) => {
-				presetHtml += `<li class="rounded-full bg-gray-800 text-white px-2.5 py-1 text-sm flex items-center gap-x-2"><button type="button" class="preset-remove" data-key="${key}"><span class="sr-only">Fjern filter</span><svg class="size-2.5 rounded-full bg-white text-gray-800" viewBox="0 0 16 16" fill="currentColor"><path d="M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94 5.28 4.22Z" /></svg></button><span>${paramLabels[key] ?? key}:</span><span class="font-bold">${value}</span></li>`;
-			});
-			presetHtml += '</ul></div>';
-			presetDesktop.innerHTML = presetHtml;
-			presetDesktop.querySelectorAll(".preset-remove").forEach(btn => {
+			paginationContainer.querySelectorAll(".pagination-btn").forEach(btn => {
 				btn.addEventListener("click", () => {
-					const key = (btn as HTMLElement).dataset.key!;
-					const u = new URLSearchParams(params);
-					u.delete(key);
-					u.delete("page");
-					window.location.href = `/biler-til-salg?${u.toString()}`;
+					currentPage = parseInt((btn as HTMLElement).dataset.page || "1");
+					applyFilters(false);
+					document.getElementById("resultater")?.scrollIntoView({ behavior: "smooth" });
 				});
 			});
 		}
+
+		const paramLabels: Record<string, string> = { make: "Bilmærke", color: "Farve", price: "Pris", model: "Model", condition: "Stand", fuelType: "Drivmiddel", transmission: "Geartype", bodyType: "Karrosseri", search: "Søgning", sort: "Sortering" };
+		const presetKeys = ["make", "model", "price", "color", "bodyType", "fuelType", "transmission", "condition"];
+
+		function renderPresets(filters: Record<string, string>) {
+			if (!presetDesktop) return;
+			const active = presetKeys.filter(k => filters[k]);
+			if (active.length === 0) { presetDesktop.innerHTML = ""; return; }
+
+			let html = '<div class="my-4"><ul class="flex lg:flex-wrap gap-2">';
+			active.forEach(key => {
+				html += `<li class="rounded-full bg-gray-800 text-white px-2.5 py-1 text-sm flex items-center gap-x-2"><button type="button" class="preset-remove" data-key="${key}"><span class="sr-only">Fjern filter</span><svg class="size-2.5 rounded-full bg-white text-gray-800" viewBox="0 0 16 16" fill="currentColor"><path d="M5.28 4.22a.75.75 0 0 0-1.06 1.06L6.94 8l-2.72 2.72a.75.75 0 1 0 1.06 1.06L8 9.06l2.72 2.72a.75.75 0 1 0 1.06-1.06L9.06 8l2.72-2.72a.75.75 0 0 0-1.06-1.06L8 6.94 5.28 4.22Z" /></svg></button><span>${paramLabels[key] ?? key}:</span><span class="font-bold">${filters[key]}</span></li>`;
+			});
+			html += '</ul></div>';
+			presetDesktop.innerHTML = html;
+
+			presetDesktop.querySelectorAll(".preset-remove").forEach(btn => {
+				btn.addEventListener("click", () => {
+					const key = (btn as HTMLElement).dataset.key!;
+					const input = filterForm?.elements.namedItem(key) as HTMLSelectElement | null;
+					if (input) { input.value = "all"; }
+					applyFilters();
+				});
+			});
+		}
+
+		function syncUrl(filters: Record<string, string>) {
+			const url = new URL(window.location.href);
+			// Clear existing filter params
+			["make", "model", "yearFrom", "yearTo", "price", "mileageFrom", "mileageTo", "fuelType", "bodyType", "transmission", "color", "condition", "sort", "search", "page", "scrollTo"].forEach(k => url.searchParams.delete(k));
+			// Set active ones
+			for (const [k, v] of Object.entries(filters)) {
+				if (v && v !== "all") url.searchParams.set(k, v);
+			}
+			if (currentPage > 1) url.searchParams.set("page", currentPage.toString());
+			history.replaceState(null, "", url.toString());
+		}
+
+		// Wire up sidebar filter form — instant filtering, no submit/reload
+		if (filterForm) {
+			filterForm.addEventListener("change", () => applyFilters());
+			filterForm.addEventListener("submit", (e) => {
+				e.preventDefault();
+				applyFilters();
+				// Close mobile filter modal if open
+				sidebarFiltersMobile?.classList.add("max-lg:opacity-0", "max-lg:pointer-events-none");
+			});
+		}
+
+		// Wire up search
+		let searchDebounce: ReturnType<typeof setTimeout>;
+		searchInput?.addEventListener("input", () => {
+			clearTimeout(searchDebounce);
+			searchDebounce = setTimeout(() => applyFilters(), 300);
+		});
+		document.getElementById("form-search")?.addEventListener("submit", (e) => {
+			e.preventDefault();
+			applyFilters();
+		});
+
+		// Wire up sort (desktop + mobile)
+		sortSelect?.addEventListener("change", () => {
+			if (sortSelectMobile) sortSelectMobile.value = sortSelect.value;
+			applyFilters();
+		});
+		sortSelectMobile?.addEventListener("change", () => {
+			if (sortSelect) sortSelect.value = sortSelectMobile.value;
+			applyFilters();
+		});
+
+		// Initialize from URL params on first load
+		const initParams = new URLSearchParams(window.location.search);
+		if (filterForm) {
+			for (const [key, value] of initParams.entries()) {
+				const input = filterForm.elements.namedItem(key) as HTMLSelectElement | null;
+				if (input && value) input.value = value;
+			}
+		}
+		if (initParams.get("search") && searchInput) searchInput.value = initParams.get("search")!;
+		if (initParams.get("sort")) {
+			if (sortSelect) sortSelect.value = initParams.get("sort")!;
+			if (sortSelectMobile) sortSelectMobile.value = initParams.get("sort")!;
+		}
+		if (initParams.get("page")) currentPage = parseInt(initParams.get("page")!) || 1;
+
+		// Populate model dropdown if make is pre-selected
+		const makesModels: { make: string; models: string[] }[] = (window as any).__makesModels || [];
+		const makeSelect = filterForm?.elements.namedItem("make") as HTMLSelectElement | null;
+		const modelSelect = filterForm?.elements.namedItem("model") as HTMLSelectElement | null;
+		if (makeSelect && modelSelect && makeSelect.value !== "all") {
+			const entry = makesModels.find(m => m.make === makeSelect.value);
+			if (entry) {
+				modelSelect.innerHTML = '<option value="all">Alle</option>';
+				entry.models.forEach(model => {
+					const opt = document.createElement("option");
+					opt.value = model;
+					opt.textContent = model;
+					modelSelect.appendChild(opt);
+				});
+				const modelParam = initParams.get("model");
+				if (modelParam) modelSelect.value = modelParam;
+			}
+		}
+
+		// Apply initial filters
+		applyFilters(false);
 	});
 </script>

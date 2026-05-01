@@ -12,34 +12,54 @@ import WhyChooseUs from "~/components/WhyChooseUs.astro";
 import { externalLinks, phone, email, siteName, siteSlogan } from "~/data/config";
 
 import ImageHero from "~/assets/images/home/hero.jpg";
-import ImageWelcome from "~/assets/images/home/welcome.jpg";
-import ImageOscar from "~/assets/images/home/oscar-rental.webp";
+import ImageWelcome from "~/assets/images/home/welcome-new.jpg";
+import ImageOscar from "~/assets/images/home/oscar-rental-new.jpg";
 
+const title = "Brugte Biler til Salg | 1x2 Biler – Prøvekørsel i Herlufmagle";
 const description =
-	"Find din næste bil hos 1x2 Biler. Vi tilbyder brugte biler og Oscar biludlejning – tryg service, fleksibel finansiering og personlig rådgivning.";
+	"Køb brugt bil med tryghed – 1x2 Biler siden 1984. Stort udvalg, finansiering med og uden udbetaling. Klik og book en prøvekørsel i dag!";
 ---
 
-<Layout title="Forside" description={description}>
+<Layout title={title} description={description}>
 	{/* 1. Hero */}
-	<Section class:list={"relative"}>
-		<Image
-			src={ImageHero}
-			alt=""
-			class:list={"absolute inset-0 w-full h-full object-cover"}
-			loading="eager"
-		/>
-		<div class="absolute inset-0 w-full h-full bg-gray-900/70"></div>
-		<Container class:list={"relative z-10"}>
-			<Heading class:list={"prose-invert max-w-4xl"}>
-				<h1 slot="heading-title" class="mb-0 text-balance">
+	<Section class:list={"relative min-h-[85vh] lg:min-h-[90vh] flex items-center overflow-hidden"}>
+		<video
+			autoplay
+			muted
+			loop
+			playsinline
+			preload="auto"
+			poster={ImageHero.src}
+			class="absolute inset-0 w-full h-full object-cover"
+		>
+			<source src="/video/hero.mp4" type="video/mp4" />
+		</video>
+		<div class="absolute inset-0 w-full h-full bg-gray-900/65"></div>
+		<Container class:list={"relative z-10 py-24 lg:py-32"}>
+			<div class="max-w-3xl">
+				<h1 class="text-white text-4xl lg:text-6xl font-bold tracking-tight text-balance leading-tight">
 					{siteSlogan}
 				</h1>
-				<p slot="heading-content">
-					Vi hjælper dig trygt gennem hele købsprocessen – og finder bilen, der
-					passer til dig.
+				<p class="mt-6 text-lg lg:text-xl text-white/90 leading-relaxed max-w-2xl">
+					Vi hjælper dig trygt gennem hele købsprocessen – og finder bilen, der passer til dig.
 				</p>
-				<Button href="/kontakt-os" class:list={"mt-4"}>Kontakt os i dag</Button>
-			</Heading>
+
+				<ul class="mt-8 space-y-3">
+					<li class="flex items-center gap-3 text-white/95 text-base lg:text-lg">
+						<svg class="size-5 shrink-0 text-[var(--color-brand-yellow)]" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" /></svg>
+						<span>Tryg bilhandel med personlig rådgivning siden 1984</span>
+					</li>
+					<li class="flex items-center gap-3 text-white/95 text-base lg:text-lg">
+						<svg class="size-5 shrink-0 text-[var(--color-brand-yellow)]" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M16.704 4.153a.75.75 0 0 1 .143 1.052l-8 10.5a.75.75 0 0 1-1.127.075l-4.5-4.5a.75.75 0 0 1 1.06-1.06l3.894 3.893 7.48-9.817a.75.75 0 0 1 1.05-.143Z" clip-rule="evenodd" /></svg>
+						<span>Fleksibel finansiering – med og uden udbetaling</span>
+					</li>
+				</ul>
+
+				<div class="mt-10 flex flex-wrap gap-4">
+					<Button href="/biler-til-salg">Se vores biler</Button>
+					<Button href="/kontakt-os" color="white-outline">Kontakt os i dag</Button>
+				</div>
+			</div>
 		</Container>
 	</Section>
 
@@ -73,7 +93,7 @@ const description =
 					</Button>
 				</div>
 				<div slot="hero-right">
-					<Image src={ImageOscar} alt="Oscar Biludlejning – udlejningsbiler" />
+					<Image src={ImageOscar} alt="Oscar Biludlejning – udlejningsbiler" class="w-full h-full object-cover rounded-lg shadow-lg" />
 				</div>
 			</Hero>
 		</Container>
@@ -114,7 +134,7 @@ const description =
 					<Button href="/kontakt-os" class:list={"mt-4"}>Få et gratis tilbud</Button>
 				</div>
 				<div slot="hero-right">
-					<Image src={ImageWelcome} alt="1x2 Biler showroom" />
+					<Image src={ImageWelcome} alt="1x2 Biler showroom" class="w-full h-full object-cover rounded-lg shadow-lg" />
 				</div>
 			</Hero>
 		</Container>

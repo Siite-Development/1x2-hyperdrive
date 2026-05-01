@@ -11,7 +11,19 @@ const { car } = Astro.props as { car: Car };
 	data-car-id={car.id}
 	data-car-on-sale={car.data.general.salePrice ? "true" : "false"}
 	data-car-available={car.data.general.availability}
-	class="card-car bg-white shadow overflow-hidden xxl:transition xxl:border-transparent xxl:border-r-4 hover:lg:border-[var(--color-brand-yellow)]"
+	data-make={car.data.general.make}
+	data-model={String(car.data.general.model)}
+	data-year={car.data.history.year}
+	data-price={car.data.general.salePrice ?? car.data.general.price}
+	data-mileage={car.data.history.mileage}
+	data-fuel={car.data.efficiency.fuelType}
+	data-body={car.data.general.bodyType}
+	data-transmission={car.data.technical.transmission}
+	data-color={car.data.exterior.color}
+	data-condition={car.data.general.condition ?? ""}
+	data-title={car.data.title}
+	data-options={(car.data.options ?? []).join(",")}
+	class="card-car bg-white shadow overflow-hidden max-lg:rounded-xl xxl:transition xxl:border-transparent xxl:border-r-4 hover:lg:border-[var(--color-brand-yellow)]"
 >
 	<a href={`/biler-til-salg/${car.id}`} class="relative isolate flex flex-col gap-8 xxl:flex-row">
 		<div class="relative aspect-[4/3] xxl:w-72 lg:shrink-0 ribbon">

@@ -22,7 +22,7 @@ const { data } = Astro.props;
 	id="sidebar-filter"
 	class="fixed lg:relative max-lg:overflow-y-auto shrink-0 inset-y-0 z-50 lg:flex w-full lg:w-80 lg:flex-col max-lg:bg-white transition duration-300 max-lg:opacity-0 max-lg:pointer-events-none"
 >
-	<div class="flex lg:sticky lg:top-8 flex-col gap-y-5 bg-white lg:shadow-md px-6 py-4 relative">
+	<div class="flex lg:sticky lg:top-20 flex-col gap-y-5 bg-white lg:shadow-md lg:rounded-xl px-6 py-4 relative">
 		<button id="button-modal-filter-close" class="lg:hidden" type="button" aria-label="Luk filter">
 			<div class="flex justify-end">
 				<IconClose class="size-8 bg-gray-800 rounded-full p-1 text-white" />
@@ -182,156 +182,72 @@ const { data } = Astro.props;
 </div>
 
 <script>
-	document.addEventListener("astro:page-load", async function () {
+	document.addEventListener("astro:page-load", function () {
 		const form = document.getElementById("form-filter") as HTMLFormElement;
+		if (!form) return;
 
-		if (form) {
-			const resultFound = document.getElementById("filter-result-found")!;
-			const makeSelect = form.elements.namedItem("make") as HTMLSelectElement;
-			const modelSelect = form.elements.namedItem("model") as HTMLSelectElement;
-			const urlParams = new URLSearchParams(window.location.search);
+		const makeSelect = form.elements.namedItem("make") as HTMLSelectElement;
+		const modelSelect = form.elements.namedItem("model") as HTMLSelectElement;
+		const makesModels: { make: string; models: string[] }[] = (window as any).__makesModels || [];
 
-			// Use inline data instead of API calls
-			const makesModels: { make: string; models: string[] }[] = (window as any).__makesModels || [];
+		// Show/hide clear buttons and populate model dropdown on change
+		form.addEventListener("change", (event) => {
+			const target = event.target as HTMLSelectElement;
+			if (!target?.name) return;
 
-			for (const [key, value] of urlParams.entries()) {
-				const input = form.elements.namedItem(key) as HTMLSelectElement;
-				const clearButton = document.getElementById(`clear-input-${key}`)! as HTMLButtonElement;
-
-				if (input) {
-					input.value = value;
-					if (value !== "all" && clearButton) {
-						clearButton.classList.remove("hidden");
-					}
-				}
+			const clearButton = document.getElementById(`clear-input-${target.name}`);
+			if (clearButton) {
+				clearButton.classList.toggle("hidden", target.value === "all");
 			}
 
-			if (makeSelect.value !== "all") {
-				const entry = makesModels.find((m) => m.make === makeSelect.value);
-				if (entry) {
-					modelSelect.innerHTML = '<option value="all">Alle</option>';
-					entry.models.forEach((model: string) => {
-						const option = document.createElement("option");
-						option.value = model;
-						option.textContent = model;
-						modelSelect.appendChild(option);
-					});
-					if (urlParams.has("model")) {
-						modelSelect.value = urlParams.get("model")!;
-					}
-				}
-			}
-
-			form.addEventListener("change", async (event) => {
-				const target = event.target! as HTMLSelectElement;
-				const clearButton = document.getElementById(`clear-input-${target.name}`)! as HTMLButtonElement;
+			// Repopulate model dropdown when make changes
+			if (target.name === "make") {
+				modelSelect.innerHTML = '<option value="all">Alle</option>';
+				const clearModel = document.getElementById("clear-input-model");
+				clearModel?.classList.add("hidden");
 
 				if (target.value !== "all") {
-					clearButton.classList.remove("hidden");
-				} else {
-					clearButton.classList.add("hidden");
-				}
-
-				if (target.name === "make") {
-					modelSelect.innerHTML = '<option value="all">Alle</option>';
-
-					if (target.value !== "all") {
-						const entry = makesModels.find((m) => m.make === target.value);
-						if (entry) {
-							entry.models.forEach((model: string) => {
-								const option = document.createElement("option");
-								option.value = model;
-								option.textContent = model;
-								modelSelect.appendChild(option);
-							});
-						}
+					const entry = makesModels.find(m => m.make === target.value);
+					if (entry) {
+						entry.models.forEach(model => {
+							const opt = document.createElement("option");
+							opt.value = model;
+							opt.textContent = model;
+							modelSelect.appendChild(opt);
+						});
 					}
 				}
-
-				// Count matching cars from DOM
-				const carList = document.getElementById("car-list");
-				if (carList) {
-					const allCards = Array.from(carList.querySelectorAll<HTMLElement>("[data-car-id]"));
-					const formData = new FormData(form);
-					const filters: Record<string, string> = {};
-					for (const [key, value] of formData.entries()) {
-						if (value !== "all") filters[key] = value.toString();
-					}
-
-					const count = allCards.filter((card) => {
-						if (filters.make && card.dataset.make !== filters.make) return false;
-						if (filters.model && card.dataset.model !== filters.model) return false;
-						if (filters.price) {
-							const [minP, maxP] = filters.price.split("-").map(Number);
-							const cp = parseInt(card.dataset.price || "0");
-							if (maxP && (cp < minP || cp > maxP)) return false;
-							if (!maxP && cp < minP) return false;
-						}
-						if (filters.fuelType && card.dataset.fuel !== filters.fuelType) return false;
-						if (filters.bodyType && card.dataset.body !== filters.bodyType) return false;
-						if (filters.transmission && card.dataset.transmission !== filters.transmission) return false;
-						if (filters.color && card.dataset.color !== filters.color) return false;
-						if (filters.condition && card.dataset.condition !== filters.condition) return false;
-						return true;
-					}).length;
-
-					resultFound.textContent = `(${count})`;
-				}
-			});
-
-			if (!/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini|Mobi/i.test(navigator.userAgent)) {
-				const filters = form.querySelectorAll("select");
-				filters.forEach((filter) => {
-					filter.addEventListener("change", () => {
-						form.requestSubmit();
-					});
-				});
 			}
+		});
 
-			form.addEventListener("submit", async function (event) {
-				event.preventDefault();
-				try {
-					const url = new URL(window.location.href);
-					const formData = new FormData(form);
+		// Clear buttons reset their field and trigger change
+		form.querySelectorAll("button[id^='clear-input-']").forEach(button => {
+			button.addEventListener("click", () => {
+				const inputId = button.id.replace("clear-input-", "");
+				const input = form.elements.namedItem(inputId) as HTMLSelectElement;
+				if (!input) return;
 
-					for (const [key, value] of formData.entries()) {
-						if (value !== "all") {
-							url.searchParams.set(key, value.toString());
-						} else {
-							url.searchParams.delete(key);
-						}
-					}
+				input.value = "all";
 
-					if (url.searchParams.has("page")) {
-						url.searchParams.delete("page");
-					}
-
-					window.location.href = url.toString();
-				} catch (error) {
-					console.error(error);
+				if (inputId === "make") {
+					modelSelect.innerHTML = '<option value="all">Alle</option>';
+					const clearModel = document.getElementById("clear-input-model");
+					clearModel?.classList.add("hidden");
 				}
+
+				button.classList.add("hidden");
+				// Trigger change so the main page script picks it up
+				form.dispatchEvent(new Event("change", { bubbles: true }));
 			});
+		});
 
-			const clearButtons = form.querySelectorAll("button[id^='clear-input-']");
-			clearButtons.forEach((button) => {
-				button.addEventListener("click", (event) => {
-					const inputId = button.id.replace("clear-input-", "");
-					const input = form.elements.namedItem(inputId) as HTMLSelectElement;
-
-					if (input) {
-						input.value = "all";
-						input.dispatchEvent(new Event("change"));
-
-						if (inputId === "make") {
-							if (modelSelect) {
-								modelSelect.innerHTML = '<option value="all">Alle</option>';
-							}
-						}
-
-						form.dispatchEvent(new Event("submit"));
-					}
-				});
-			});
+		// Initialize clear button visibility from URL params
+		const urlParams = new URLSearchParams(window.location.search);
+		for (const [key, value] of urlParams.entries()) {
+			if (value && value !== "all") {
+				const clearButton = document.getElementById(`clear-input-${key}`);
+				clearButton?.classList.remove("hidden");
+			}
 		}
 	});
 </script>

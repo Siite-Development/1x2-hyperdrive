@@ -1,0 +1,156 @@
+---
+import { phone, email, address, siteName, hours } from "~/data/config";
+---
+
+{/* Contact bubble — hidden on mobile (they have the bottom nav), visible on md+ */}
+<div id="contact-bubble" class="fixed bottom-6 right-6 z-50 hidden md:block print:hidden">
+	{/* Expanded panel */}
+	<div
+		id="contact-panel"
+		class="absolute bottom-16 right-0 w-80 bg-white rounded-2xl shadow-2xl ring-1 ring-gray-900/5 overflow-hidden origin-bottom-right scale-95 opacity-0 pointer-events-none transition-all duration-200"
+	>
+		{/* Header */}
+		<div class="bg-gray-900 px-5 py-4">
+			<div class="flex items-center justify-between">
+				<div>
+					<p class="text-white font-bold text-base">{siteName}</p>
+					<p class="text-gray-400 text-sm mt-0.5">Hvordan kan vi hjælpe dig?</p>
+				</div>
+				<button
+					id="contact-panel-close"
+					type="button"
+					class="text-gray-400 hover:text-white transition p-1"
+					aria-label="Luk kontaktpanel"
+				>
+					<svg class="size-5" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+						<path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+					</svg>
+				</button>
+			</div>
+		</div>
+
+		{/* Contact options */}
+		<div class="p-4 space-y-2">
+			{/* Ring */}
+			<a
+				href={phone.href}
+				class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 transition group"
+			>
+				<div class="size-10 rounded-full bg-[var(--color-brand-yellow-soft)] text-gray-900 flex items-center justify-center shrink-0 group-hover:bg-[var(--color-brand-yellow)] transition">
+					<svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+				</div>
+				<div>
+					<p class="text-sm font-semibold text-gray-900">Ring til os</p>
+					<p class="text-sm text-gray-500">{phone.label}</p>
+				</div>
+			</a>
+
+			{/* E-mail */}
+			<a
+				href={email.href}
+				class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 transition group"
+			>
+				<div class="size-10 rounded-full bg-[var(--color-brand-yellow-soft)] text-gray-900 flex items-center justify-center shrink-0 group-hover:bg-[var(--color-brand-yellow)] transition">
+					<svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+				</div>
+				<div>
+					<p class="text-sm font-semibold text-gray-900">Send en e-mail</p>
+					<p class="text-sm text-gray-500">{email.label}</p>
+				</div>
+			</a>
+
+			{/* Kontaktformular */}
+			<a
+				href="/kontakt-os"
+				class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-gray-50 transition group"
+			>
+				<div class="size-10 rounded-full bg-[var(--color-brand-yellow-soft)] text-gray-900 flex items-center justify-center shrink-0 group-hover:bg-[var(--color-brand-yellow)] transition">
+					<svg class="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+				</div>
+				<div>
+					<p class="text-sm font-semibold text-gray-900">Skriv til os</p>
+					<p class="text-sm text-gray-500">Via kontaktformularen</p>
+				</div>
+			</a>
+		</div>
+
+		{/* Footer — address & hours */}
+		<div class="border-t border-gray-100 px-5 py-3">
+			<div class="flex items-start gap-2 text-xs text-gray-500">
+				<svg class="size-3.5 shrink-0 mt-0.5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+				<span>{address.street}, {address.zip} {address.city}</span>
+			</div>
+			<div class="flex items-start gap-2 text-xs text-gray-500 mt-1.5">
+				<svg class="size-3.5 shrink-0 mt-0.5 text-gray-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+				<span>Man–Lør: Efter aftale &middot; Søn: Lukket</span>
+			</div>
+		</div>
+	</div>
+
+	{/* Floating trigger button */}
+	<button
+		id="contact-bubble-toggle"
+		type="button"
+		class="size-14 rounded-full bg-gray-900 text-white shadow-lg hover:bg-gray-800 transition-all duration-200 flex items-center justify-center hover:scale-105 active:scale-95"
+		aria-label="Åbn kontaktinfo"
+	>
+		{/* Chat icon (default) */}
+		<svg id="bubble-icon-chat" class="size-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+			<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+			<line x1="9" y1="10" x2="9" y2="10" stroke-width="3" stroke-linecap="round"/>
+			<line x1="12" y1="10" x2="12" y2="10" stroke-width="3" stroke-linecap="round"/>
+			<line x1="15" y1="10" x2="15" y2="10" stroke-width="3" stroke-linecap="round"/>
+		</svg>
+		{/* Close icon (when open) */}
+		<svg id="bubble-icon-close" class="size-6 hidden" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+			<path d="M6 18L18 6M6 6l12 12"/>
+		</svg>
+	</button>
+</div>
+
+<script>
+	document.addEventListener("astro:page-load", () => {
+		const toggle = document.getElementById("contact-bubble-toggle");
+		const panel = document.getElementById("contact-panel");
+		const closeBtn = document.getElementById("contact-panel-close");
+		const iconChat = document.getElementById("bubble-icon-chat");
+		const iconClose = document.getElementById("bubble-icon-close");
+
+		let isOpen = false;
+
+		function open() {
+			isOpen = true;
+			panel?.classList.remove("scale-95", "opacity-0", "pointer-events-none");
+			panel?.classList.add("scale-100", "opacity-100", "pointer-events-auto");
+			iconChat?.classList.add("hidden");
+			iconClose?.classList.remove("hidden");
+		}
+
+		function close() {
+			isOpen = false;
+			panel?.classList.add("scale-95", "opacity-0", "pointer-events-none");
+			panel?.classList.remove("scale-100", "opacity-100", "pointer-events-auto");
+			iconChat?.classList.remove("hidden");
+			iconClose?.classList.add("hidden");
+		}
+
+		toggle?.addEventListener("click", () => {
+			if (isOpen) close(); else open();
+		});
+
+		closeBtn?.addEventListener("click", close);
+
+		// Close on outside click
+		document.addEventListener("click", (e) => {
+			const bubble = document.getElementById("contact-bubble");
+			if (isOpen && bubble && !bubble.contains(e.target as Node)) {
+				close();
+			}
+		});
+
+		// Close on Escape
+		document.addEventListener("keydown", (e) => {
+			if (e.key === "Escape" && isOpen) close();
+		});
+	});
+</script>
