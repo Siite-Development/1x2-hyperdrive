@@ -1,6 +1,9 @@
 # build output
 dist/
 
+# Vercel output — the function’s dist/ must be committed
+!.vercel/output/functions/_render.func/dist/
+
 # generated types
 .astro/
 
