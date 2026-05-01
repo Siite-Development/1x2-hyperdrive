@@ -1,4 +1,4 @@
-import { g as getCollection } from './_astro_content_BlsUEsru.mjs';
+import { g as getCollection } from './_astro_content_BFC59NXG.mjs';
 
 async function getFilteredCars(params) {
   const {
